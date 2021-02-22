@@ -1,5 +1,5 @@
-﻿using Lastgram;
-using Lastgram.Commands;
+﻿using Lastgram.Commands;
+using Lastgram.Data;
 using Lastgram.Lastfm;
 using Lastgram.Spotify;
 using Moq;

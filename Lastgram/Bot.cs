@@ -52,7 +52,7 @@ namespace Lastgram
                 new BotCommand
                 {
                     Command = "np",
-                    Description = "Get a Spotify link to the currently playing song"
+                    Description = "Get a Spotify link to the currently playing song. /np [username [temp]]"
                 },
                 new BotCommand
                 {

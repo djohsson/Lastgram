@@ -1,4 +1,4 @@
-﻿namespace Lastgram
+﻿namespace Lastgram.Data
 {
     public interface IUserRepository
     {
