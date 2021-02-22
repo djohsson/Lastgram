@@ -76,9 +76,16 @@ namespace Lastgram
             await ExecuteCommand(e, command);
         }
 
-        private async Task ExecuteCommand(MessageEventArgs e, CommandType commandType)
+        private async Task ExecuteCommand(MessageEventArgs eventArgs, CommandType commandType)
         {
-            await commandHandler.HandleCommandAsync(commandType, e.Message, SendMessageAsync);
+            try
+            {
+                await commandHandler.HandleCommandAsync(commandType, eventArgs.Message, SendMessageAsync);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         private async Task SendMessageAsync(Chat chat, string text)

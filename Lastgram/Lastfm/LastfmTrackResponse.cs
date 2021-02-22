@@ -1,6 +1,6 @@
 ﻿using IF.Lastfm.Core.Objects;
 
-namespace Lastgram
+namespace Lastgram.Lastfm
 {
     public class LastfmTrackResponse
     {

@@ -1,4 +1,4 @@
-﻿namespace Lastgram
+﻿namespace Lastgram.Spotify
 {
     public class SpotifySearchResponse
     {

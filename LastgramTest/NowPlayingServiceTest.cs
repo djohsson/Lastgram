@@ -1,4 +1,6 @@
 ﻿using Lastgram;
+using Lastgram.Lastfm;
+using Lastgram.Spotify;
 using Moq;
 using NUnit.Framework;
 using System.Threading.Tasks;
@@ -12,13 +14,15 @@ namespace LastgramTest
         private INowPlayingService nowPlayingService;
         private Mock<IUserRepository> userRepositoryMock;
         private Mock<ILastFmService> lastfmServiceMock;
+        private Mock<ISpotifyService> spotifyServiceMock;
 
         [SetUp]
         public void Setup()
         {
             userRepositoryMock = new Mock<IUserRepository>();
             lastfmServiceMock = new Mock<ILastFmService>();
-            nowPlayingService = new NowPlayingService(userRepositoryMock.Object, lastfmServiceMock.Object);
+            spotifyServiceMock = new Mock<ISpotifyService>();
+            nowPlayingService = new NowPlayingService(userRepositoryMock.Object, lastfmServiceMock.Object, spotifyServiceMock.Object);
         }
 
         [Test]
@@ -47,6 +51,7 @@ namespace LastgramTest
             string lastFmUsernameFromRepo = string.Empty;
 
             userRepositoryMock.Setup(m => m.TryGetUser(It.IsAny<int>(), out lastFmUsername)).Returns(true);
+            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
 
             nowPlayingService.HandleCommandAsync(
                 new Message()
@@ -64,7 +69,7 @@ namespace LastgramTest
                 }
             );
 
-            Assert.AreEqual(lastFmUsername, lastFmUsernameFromRepo);
+            Assert.AreEqual("Could not find <i>John</i> on last.fm", lastFmUsernameFromRepo);
             userRepositoryMock.Verify(m => m.TryGetUser(It.IsAny<int>(), out lastFmUsernameFromRepo), Times.Once);
         }
 
@@ -94,6 +99,7 @@ namespace LastgramTest
             string telegramUsername = string.Empty;
 
             userRepositoryMock.Setup(m => m.TryGetUser(It.IsAny<int>(), out lastFmUsernameFromRepo)).Returns(false);
+            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
 
             nowPlayingService.HandleCommandAsync(
                 new Message()
@@ -112,7 +118,7 @@ namespace LastgramTest
                 }
             );
 
-            Assert.AreEqual(lastFmUsername, telegramUsername);
+            Assert.AreEqual("Could not find <i>John</i> on last.fm", telegramUsername);
             userRepositoryMock.Verify(m => m.AddUser(It.IsAny<int>(), lastFmUsername), Times.Once);
         }
     }

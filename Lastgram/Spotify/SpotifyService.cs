@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lastgram
+namespace Lastgram.Spotify
 {
     class SpotifyService : ISpotifyService
     {
@@ -44,6 +44,7 @@ namespace Lastgram
             }
             catch (APIException e)
             {
+                Console.WriteLine(e);
             }
 
             return new SpotifySearchResponse(false);

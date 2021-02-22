@@ -1,7 +1,6 @@
-﻿using IF.Lastfm.Core.Objects;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace Lastgram
+namespace Lastgram.Lastfm
 {
     public interface ILastFmService
     {
