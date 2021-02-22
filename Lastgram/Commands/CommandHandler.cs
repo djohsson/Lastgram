@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 
-namespace Lastgram
+namespace Lastgram.Commands
 {
     internal class CommandHandler : ICommandHandler
     {

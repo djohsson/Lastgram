@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Telegram.Bot.Types;
 
-namespace Lastgram
+namespace Lastgram.Commands
 {
     public class NowPlayingService : INowPlayingService
     {

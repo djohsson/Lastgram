@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lastgram
+namespace Lastgram.Data
 {
     internal class UserRepository : IUserRepository
     {

@@ -1,4 +1,4 @@
-﻿namespace Lastgram
+﻿namespace Lastgram.Commands
 {
     public enum CommandType
     {

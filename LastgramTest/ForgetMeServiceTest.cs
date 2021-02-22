@@ -1,4 +1,5 @@
 ﻿using Lastgram;
+using Lastgram.Commands;
 using Moq;
 using NUnit.Framework;
 using System.Threading.Tasks;

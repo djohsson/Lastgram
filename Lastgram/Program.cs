@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Lastgram.Commands;
+using Lastgram.Data;
 using Lastgram.Lastfm;
 using Lastgram.Spotify;
 using System;
