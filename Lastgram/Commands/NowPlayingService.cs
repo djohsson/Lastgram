@@ -31,11 +31,13 @@ namespace Lastgram.Commands
             if (!parameters.Any())
             {
                 // User did not provide Last.fm username. Try fetching one from the repository
-                if (!userRepository.TryGetUser(message.From.Id, out lastFmUsername))
+                lastFmUsername = await userRepository.TryGetUserAsync(message.From.Id);
+
+                if (string.IsNullOrEmpty(lastFmUsername))
                 {
                     lastFmUsername = message.From.Username;
 
-                    userRepository.AddUser(message.From.Id, lastFmUsername);
+                    await userRepository.AddUserAsync(message.From.Id, lastFmUsername);
                 }
             }
             else if (parameters.Count == 1)
@@ -43,7 +45,7 @@ namespace Lastgram.Commands
                 // User has provided a Last.fm username
                 lastFmUsername = parameters.First();
 
-                userRepository.AddUser(message.From.Id, lastFmUsername);
+                await userRepository.AddUserAsync(message.From.Id, lastFmUsername);
             }
             else if (parameters.Count == 2 && parameters.Last().ToLowerInvariant().Equals("temp"))
             {
@@ -59,17 +61,17 @@ namespace Lastgram.Commands
             var track = await lastFmService.GetNowPlayingAsync(lastFmUsername);
             string response;
 
-            if (!track.Success)
-            {
-                lastFmUsername = HttpUtility.HtmlEncode(lastFmUsername);
-
-                response = $"Could not find <i>{lastFmUsername}</i> on last.fm";
-            }
-            else
+            if (track.Success)
             {
                 var spotifySearchResponse = await spotifyService.TryGetLinkToTrackAsync($"{track.Track.ArtistName} - {track.Track.Name}");
 
                 response = GetResponseMessage(message, track, spotifySearchResponse);
+            }
+            else
+            {
+                lastFmUsername = HttpUtility.HtmlEncode(lastFmUsername);
+
+                response = $"Could not find <i>{lastFmUsername}</i> on last.fm";
             }
 
             await responseFunc(message.Chat, response);
@@ -83,14 +85,17 @@ namespace Lastgram.Commands
 
             if (spotifySearchResponse.Success && (track.Track.IsNowPlaying ?? false))
             {
+                // Now playing, and found a Spotify URL
                 response = $"{username} is currently playing\n<a href=\"{spotifySearchResponse.Url}\"><b>{artistAndName}</b></a>";
             }
             else if (spotifySearchResponse.Success)
             {
+                // Not currently playing, but found a Spotify URL
                 response = $"{username} played\n<a href=\"{spotifySearchResponse.Url}\"><b>{artistAndName}</b></a>\non {track.Track.TimePlayed?.DateTime}";
             }
             else
             {
+                // Not currently playing, and did not find a Spotify URL
                 response = $"{username} played\n<b>{artistAndName}</b>\non {track.Track.TimePlayed?.DateTime}";
             }
 

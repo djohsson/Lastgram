@@ -14,11 +14,9 @@ namespace Lastgram.Commands
             this.userRepository = userRepository;
         }
 
-        public Task HandleCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
+        public async Task HandleCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
-            userRepository.RemoveUser(message.From.Id);
-
-            return Task.CompletedTask;
+            await userRepository.RemoveUserAsync(message.From.Id);
         }
     }
 }

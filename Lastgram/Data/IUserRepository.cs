@@ -1,11 +1,13 @@
-﻿namespace Lastgram.Data
+﻿using System.Threading.Tasks;
+
+namespace Lastgram.Data
 {
     public interface IUserRepository
     {
-        void AddUser(int telegramUserId, string lastFmUsername);
+        Task AddUserAsync(int telegramUserId, string lastFmUsername);
 
-        bool TryGetUser(int telegramUserId, out string lastFmUsername);
+        Task<string> TryGetUserAsync(int telegramUserId);
 
-        void RemoveUser(int telegramUserId);
+        Task RemoveUserAsync(int telegramUserId);
     }
 }

@@ -35,7 +35,7 @@ namespace LastgramTest
                 (chat, message) => Task.CompletedTask
             );
 
-            userRepositoryMock.Verify(m => m.RemoveUser(It.Is<int>(id => id == 1)), Times.Once);
+            userRepositoryMock.Verify(m => m.RemoveUserAsync(It.Is<int>(id => id == 1)), Times.Once);
         }
     }
 }

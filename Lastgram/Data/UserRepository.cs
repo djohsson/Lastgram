@@ -1,36 +1,56 @@
-﻿using System.Collections.Generic;
+﻿using Lastgram.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Lastgram.Data
 {
     internal class UserRepository : IUserRepository
     {
-        private readonly IDictionary<int, string> lastFmUsers;
+        private readonly MyDbContext context;
 
-        public UserRepository()
+        public UserRepository(MyDbContext context)
         {
-            lastFmUsers = new Dictionary<int, string>();
+            this.context = context;
         }
 
-        public void AddUser(int telegramUserId, string lastFmUsername)
+        public async Task AddUserAsync(int telegramUserId, string lastFmUsername)
         {
-            if (lastFmUsers.ContainsKey(telegramUserId))
-            {
-                lastFmUsers[telegramUserId] = lastFmUsername;
+            var user = await context.Users.FindAsync(telegramUserId);
 
-                return;
+            if (user == null)
+            {
+                await context.Users.AddAsync(new User
+                {
+                    TelegramUserId = telegramUserId,
+                    LastfmUsername = lastFmUsername,
+                });
+            } else
+            {
+                user.LastfmUsername = lastFmUsername;
+                context.Users.Update(user);
             }
 
-            lastFmUsers.Add(telegramUserId, lastFmUsername);
+            await context.SaveChangesAsync();
         }
 
-        public void RemoveUser(int telegramUserId)
+        public async Task RemoveUserAsync(int telegramUserId)
         {
-            lastFmUsers.Remove(telegramUserId);
+            var user = new User
+            {
+                TelegramUserId = telegramUserId
+            };
+
+            context.Remove(user);
+
+            await context.SaveChangesAsync();
         }
 
-        public bool TryGetUser(int telegramUserId, out string lastFmUsername)
+        public async Task<string> TryGetUserAsync(int telegramUserId)
         {
-            return lastFmUsers.TryGetValue(telegramUserId, out lastFmUsername);
+            var user = await context.Users.FindAsync(telegramUserId);
+
+            return user?.LastfmUsername;
         }
     }
 }

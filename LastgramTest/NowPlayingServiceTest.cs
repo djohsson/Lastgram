@@ -42,7 +42,7 @@ namespace LastgramTest
                 (chat, message) => Task.CompletedTask
             );
 
-            userRepositoryMock.Verify(mocks => mocks.AddUser(It.Is<int>(id => id == 1), It.Is<string>(username => username == lastFmUsername)), Times.Once);
+            userRepositoryMock.Verify(mocks => mocks.AddUserAsync(It.Is<int>(id => id == 1), It.Is<string>(username => username == lastFmUsername)), Times.Once);
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace LastgramTest
             string lastFmUsername = "John";
             string lastFmUsernameFromRepo = string.Empty;
 
-            userRepositoryMock.Setup(m => m.TryGetUser(It.IsAny<int>(), out lastFmUsername)).Returns(true);
+            userRepositoryMock.Setup(m => m.TryGetUserAsync(It.IsAny<int>())).ReturnsAsync(lastFmUsername);
             lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
 
             nowPlayingService.HandleCommandAsync(
@@ -71,7 +71,7 @@ namespace LastgramTest
             );
 
             Assert.AreEqual("Could not find <i>John</i> on last.fm", lastFmUsernameFromRepo);
-            userRepositoryMock.Verify(m => m.TryGetUser(It.IsAny<int>(), out lastFmUsernameFromRepo), Times.Once);
+            userRepositoryMock.Verify(m => m.TryGetUserAsync(It.IsAny<int>()), Times.Once);
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace LastgramTest
                 (chat, message) => Task.CompletedTask
             );
 
-            userRepositoryMock.Verify(mocks => mocks.AddUser(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+            userRepositoryMock.Verify(mocks => mocks.AddUserAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace LastgramTest
             string lastFmUsernameFromRepo = string.Empty;
             string telegramUsername = string.Empty;
 
-            userRepositoryMock.Setup(m => m.TryGetUser(It.IsAny<int>(), out lastFmUsernameFromRepo)).Returns(false);
+            userRepositoryMock.Setup(m => m.TryGetUserAsync(It.IsAny<int>())).ReturnsAsync(string.Empty);
             lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
 
             nowPlayingService.HandleCommandAsync(
@@ -120,7 +120,7 @@ namespace LastgramTest
             );
 
             Assert.AreEqual("Could not find <i>John</i> on last.fm", telegramUsername);
-            userRepositoryMock.Verify(m => m.AddUser(It.IsAny<int>(), lastFmUsername), Times.Once);
+            userRepositoryMock.Verify(m => m.AddUserAsync(It.IsAny<int>(), lastFmUsername), Times.Once);
         }
     }
 }
