@@ -7,6 +7,8 @@ namespace Lastgram.Data
 {
     public class SpotifyTrackRepository : ISpotifyTrackRepository
     {
+        private const int ValidDays = 30;
+
         private readonly MyDbContext context;
 
         public SpotifyTrackRepository(MyDbContext context)
@@ -25,8 +27,7 @@ namespace Lastgram.Data
                 Md5 = Hasher.CreateMD5(artistAndName),
                 Url = url,
                 Artist = formattedArtist,
-                Track = formattedTrack,
-                ValidUntil = DateTime.UtcNow.AddDays(30)
+                Track = formattedTrack
             };
 
             await context.SpotifyTracks.AddAsync(spotifyTrack);
@@ -47,7 +48,7 @@ namespace Lastgram.Data
                 return null;
             }
 
-            if (spotifyTrack.ValidUntil < DateTime.UtcNow)
+            if (spotifyTrack.CreatedAt.AddDays(ValidDays) < DateTime.UtcNow)
             {
                 context.SpotifyTracks.Remove(spotifyTrack);
 

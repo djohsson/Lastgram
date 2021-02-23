@@ -28,6 +28,10 @@ namespace Lastgram.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("Track")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -35,9 +39,6 @@ namespace Lastgram.Migrations
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTime>("ValidUntil")
-                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Md5");
 

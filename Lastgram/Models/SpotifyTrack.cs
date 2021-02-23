@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Lastgram.Models
 {
@@ -7,6 +8,9 @@ namespace Lastgram.Models
     {
         [Key]
         public string Md5 { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [MaxLength(255)]
         public string Artist { get; set; }
@@ -16,8 +20,5 @@ namespace Lastgram.Models
 
         [Required]
         public string Url { get; set; }
-
-        [Required]
-        public DateTime ValidUntil { get; set; }
     }
 }

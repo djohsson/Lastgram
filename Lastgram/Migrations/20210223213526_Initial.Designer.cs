@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lastgram.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20210223204933_AddArtistAndTrack")]
-    partial class AddArtistAndTrack
+    [Migration("20210223213526_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,16 +27,20 @@ namespace Lastgram.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Artist")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Track")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Url")
+                        .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTime>("ValidUntil")
-                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Md5");
 
@@ -51,6 +55,7 @@ namespace Lastgram.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("LastfmUsername")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("TelegramUserId");

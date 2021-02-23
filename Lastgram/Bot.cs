@@ -86,6 +86,8 @@ namespace Lastgram
             catch (Exception e)
             {
                 Console.WriteLine(e);
+
+                await SendMessageAsync(eventArgs.Message.Chat, "Oops, something went wrong!");
             }
         }
 

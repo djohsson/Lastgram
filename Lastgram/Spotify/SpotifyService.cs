@@ -61,7 +61,7 @@ namespace Lastgram.Spotify
 
         private static SearchRequest CreateSearchRequest(string artist, string track)
         {
-            return new SearchRequest(SearchRequest.Types.Track, $"{artist} - {track}")
+            return new SearchRequest(SearchRequest.Types.Track, $"{artist} {track}")
             {
                 Limit = 1,
                 Market = "SE"
