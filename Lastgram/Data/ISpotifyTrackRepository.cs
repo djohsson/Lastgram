@@ -4,8 +4,8 @@ namespace Lastgram.Data
 {
     public interface ISpotifyTrackRepository
     {
-        Task AddSpotifyTrackAsync(string artistAndName, string url);
+        Task AddSpotifyTrackAsync(string artist, string track, string url);
 
-        Task<string> TryGetSpotifyTrackUrlAsync(string artistAndName);
+        Task<string> TryGetSpotifyTrackUrlAsync(string artist, string track);
     }
 }

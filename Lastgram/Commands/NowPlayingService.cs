@@ -63,9 +63,9 @@ namespace Lastgram.Commands
 
             if (track.Success)
             {
-                var spotifySearchResponse = await spotifyService.TryGetLinkToTrackAsync($"{track.Track.ArtistName} - {track.Track.Name}");
+                var url = await spotifyService.TryGetLinkToTrackAsync(track.Track.ArtistName, track.Track.Name);
 
-                response = GetResponseMessage(message, track, spotifySearchResponse);
+                response = GetResponseMessage(message, track, url);
             }
             else
             {
@@ -77,21 +77,21 @@ namespace Lastgram.Commands
             await responseFunc(message.Chat, response);
         }
 
-        private static string GetResponseMessage(Message message, LastfmTrackResponse track, SpotifySearchResponse spotifySearchResponse)
+        private static string GetResponseMessage(Message message, LastfmTrackResponse track, string url)
         {
             string response;
             string artistAndName = HttpUtility.HtmlEncode($"{track.Track.ArtistName} - {track.Track.Name}");
             string username = HttpUtility.HtmlEncode(message.From.Username);
 
-            if (spotifySearchResponse.Success && (track.Track.IsNowPlaying ?? false))
+            if (!string.IsNullOrEmpty(url) && (track.Track.IsNowPlaying ?? false))
             {
                 // Now playing, and found a Spotify URL
-                response = $"{username} is currently playing\n<a href=\"{spotifySearchResponse.Url}\"><b>{artistAndName}</b></a>";
+                response = $"{username} is currently playing\n<a href=\"{url}\"><b>{artistAndName}</b></a>";
             }
-            else if (spotifySearchResponse.Success)
+            else if (!string.IsNullOrEmpty(url))
             {
                 // Not currently playing, but found a Spotify URL
-                response = $"{username} played\n<a href=\"{spotifySearchResponse.Url}\"><b>{artistAndName}</b></a>\non {track.Track.TimePlayed?.DateTime}";
+                response = $"{username} played\n<a href=\"{url}\"><b>{artistAndName}</b></a>\non {track.Track.TimePlayed?.DateTime}";
             }
             else
             {

@@ -13,10 +13,8 @@ namespace Lastgram.Spotify
 
         public SpotifyService(ISpotifyTrackRepository spotifyTrackRepository)
         {
+            // Not very testable...
             var config = SpotifyClientConfig.CreateDefault();
-
-            var test2 = Environment.GetEnvironmentVariable("LASTGRAM_TELEGRAM_KEY");
-            var test = Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTID");
 
             var request = new ClientCredentialsRequest(
                 Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTID"),
@@ -29,20 +27,16 @@ namespace Lastgram.Spotify
             this.spotifyTrackRepository = spotifyTrackRepository;
         }
 
-        public async Task<SpotifySearchResponse> TryGetLinkToTrackAsync(string trackName)
+        public async Task<string> TryGetLinkToTrackAsync(string artist, string track)
         {
-            var url = await spotifyTrackRepository.TryGetSpotifyTrackUrlAsync(trackName);
+            var url = await spotifyTrackRepository.TryGetSpotifyTrackUrlAsync(artist, track);
 
             if (url != null)
             {
-                return new SpotifySearchResponse(true, url);
+                return url;
             }
 
-            var searchRequest = new SearchRequest(SearchRequest.Types.Track, trackName)
-            {
-                Limit = 1,
-                Market = "SE"
-            };
+            SearchRequest searchRequest = CreateSearchRequest(artist, track);
 
             try
             {
@@ -52,9 +46,9 @@ namespace Lastgram.Spotify
                 {
                     url = trackResponse.Tracks.Items.First().ExternalUrls["spotify"];
 
-                    await spotifyTrackRepository.AddSpotifyTrackAsync(trackName, url);
+                    await spotifyTrackRepository.AddSpotifyTrackAsync(artist, track, url);
 
-                    return new SpotifySearchResponse(true, url);
+                    return url;
                 }
             }
             catch (APIException e)
@@ -62,7 +56,16 @@ namespace Lastgram.Spotify
                 Console.WriteLine(e);
             }
 
-            return new SpotifySearchResponse(false);
+            return null;
+        }
+
+        private static SearchRequest CreateSearchRequest(string artist, string track)
+        {
+            return new SearchRequest(SearchRequest.Types.Track, $"{artist} - {track}")
+            {
+                Limit = 1,
+                Market = "SE"
+            };
         }
     }
 }
