@@ -1,6 +1,4 @@
 ﻿using Lastgram.Models;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lastgram.Data
@@ -36,10 +34,12 @@ namespace Lastgram.Data
 
         public async Task RemoveUserAsync(int telegramUserId)
         {
-            var user = new User
+            var user = await context.Users.FindAsync(telegramUserId);
+
+            if (user == null)
             {
-                TelegramUserId = telegramUserId
-            };
+                return;
+            }
 
             context.Remove(user);
 

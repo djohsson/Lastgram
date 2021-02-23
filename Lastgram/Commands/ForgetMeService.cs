@@ -17,6 +17,8 @@ namespace Lastgram.Commands
         public async Task HandleCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
             await userRepository.RemoveUserAsync(message.From.Id);
+
+            await responseFunc(message.Chat, "You have been removed!");
         }
     }
 }
