@@ -1,0 +1,29 @@
+﻿version: "3.3"  # optional since v1.27.0
+services:
+    lastgram:
+        build: .
+        environment:
+            - "LASTGRAM_CONNECTIONSTRING=${LASTGRAM_DOCKER_CONNECTIONSTRING}"
+            - "LASTGRAM_LASTFM_APIKEY=${LASTGRAM_LASTFM_APIKEY}"
+            - "LASTGRAM_LASTFM_APISECRET=${LASTGRAM_LASTFM_APISECRET}"
+            - "LASTGRAM_SPOTIFY_CLIENTID=${LASTGRAM_SPOTIFY_CLIENTID}"
+            - "LASTGRAM_SPOTIFY_CLIENTSECRET=${LASTGRAM_SPOTIFY_CLIENTSECRET}"
+            - "LASTGRAM_TELEGRAM_KEY=${LASTGRAM_TELEGRAM_KEY}"
+        depends_on:
+            - db
+        restart: always
+    db:
+        image: postgres
+        environment: 
+            - "POSTGRES_PASSWORD=${LASTGRAM_DB_PASSWORD}"
+        ports:
+            - "5432:5432"
+        volumes:
+         - pgdata:/var/lib/postgresql/data
+        restart: always
+    adminer:
+        image: adminer
+        ports: 
+            - "8080:8080"
+volumes: 
+     pgdata:
