@@ -4,15 +4,16 @@ using Lastgram.Data;
 using Lastgram.Lastfm;
 using Lastgram.Spotify;
 using Microsoft.EntityFrameworkCore;
-using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lastgram
 {
-    class Program
+    public class Program
     {
         private static IContainer Container { get; set; }
 
-        static void Main(string[] args)
+        public static async Task Main()
         {
             RegisterTypes();
 
@@ -22,9 +23,9 @@ namespace Lastgram
 
                 var bot = scope.Resolve<IBot>();
 
-                bot.StartAsync().Wait();
+                await bot.StartAsync();
 
-                Console.Read();
+                await Task.Run(() => Thread.Sleep(Timeout.Infinite));
             }
         }
 
