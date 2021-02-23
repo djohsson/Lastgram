@@ -1,5 +1,6 @@
 ﻿using Lastgram.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Lastgram.Data
 {
@@ -7,7 +8,7 @@ namespace Lastgram.Data
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(@"Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=mysecretpassword");
+            optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("LASTGRAM_CONNECTIONSTRING"));
         }
 
         public DbSet<User> Users { get; set; }
