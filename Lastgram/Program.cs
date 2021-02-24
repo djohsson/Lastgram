@@ -36,8 +36,8 @@ namespace Lastgram
             builder.RegisterType<MyDbContext>().SingleInstance();
             builder.RegisterType<UserRepository>().As<IUserRepository>().SingleInstance();
             builder.RegisterType<CommandHandler>().As<ICommandHandler>();
-            builder.RegisterType<NowPlayingService>().As<INowPlayingService>().SingleInstance();
-            builder.RegisterType<ForgetMeService>().As<IForgetMeService>().SingleInstance();
+            builder.RegisterType<ForgetMeCommand>().As<ICommand>().SingleInstance();
+            builder.RegisterType<NowPlayingCommand>().As<ICommand>().SingleInstance();
             builder.RegisterType<LastFmService>().As<ILastFmService>().SingleInstance();
             builder.RegisterType<SpotifyService>().As<ISpotifyService>().SingleInstance();
             builder.RegisterType<SpotifyTrackRepository>().As<ISpotifyTrackRepository>().SingleInstance();

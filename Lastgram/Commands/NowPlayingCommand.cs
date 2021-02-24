@@ -10,20 +10,24 @@ using Telegram.Bot.Types;
 
 namespace Lastgram.Commands
 {
-    public class NowPlayingService : INowPlayingService
+    public class NowPlayingCommand : INowPlayingCommand
     {
         private readonly IUserRepository userRepository;
         private readonly ILastFmService lastFmService;
         private readonly ISpotifyService spotifyService;
 
-        public NowPlayingService(IUserRepository userRepository, ILastFmService lastFmService, ISpotifyService spotifyService)
+        public NowPlayingCommand(IUserRepository userRepository, ILastFmService lastFmService, ISpotifyService spotifyService)
         {
             this.userRepository = userRepository;
             this.lastFmService = lastFmService;
             this.spotifyService = spotifyService;
         }
 
-        public async Task HandleCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
+        public string CommandName => "np";
+
+        public string CommandDescription => "/np [username [temp]]";
+
+        public async Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
             string lastfmUsername;
             List<string> parameters = message.GetParameters();
@@ -35,7 +39,9 @@ namespace Lastgram.Commands
 
                 if (string.IsNullOrEmpty(lastfmUsername))
                 {
-                    lastfmUsername = message.From.Username;
+                    lastfmUsername = string.IsNullOrEmpty(message.From.Username)
+                        ? message.From.FirstName
+                        : message.From.Username;
 
                     await userRepository.AddUserAsync(message.From.Id, lastfmUsername);
                 }
@@ -86,20 +92,23 @@ namespace Lastgram.Commands
             if (!string.IsNullOrEmpty(url) && (track.Track.IsNowPlaying ?? false))
             {
                 // Now playing, and found a Spotify URL
-                response = $"{username} is currently playing\n<a href=\"{url}\"><b>{artistAndName}</b></a>";
+                response = $"<i>{username} is currently playing</i>\n<a href=\"{url}\"><b>{artistAndName}</b></a>";
             }
             else if (!string.IsNullOrEmpty(url))
             {
                 // Not currently playing, but found a Spotify URL
-                response = $"{username} played\n<a href=\"{url}\"><b>{artistAndName}</b></a>\non {track.Track.TimePlayed?.DateTime}";
+                response = $"<i>{username} played</i>\n<a href=\"{url}\"><b>{artistAndName}</b></a>\n<i>on {GetTimePlayed(track)}</i>";
             }
             else
             {
                 // Not currently playing, and did not find a Spotify URL
-                response = $"{username} played\n<b>{artistAndName}</b>\non {track.Track.TimePlayed?.DateTime}";
+                response = $"<i>{username} played</i>\n<b>{artistAndName}</b>\n<i>on {GetTimePlayed(track)}</i>";
             }
 
             return response;
         }
+
+        private static string GetTimePlayed(LastfmTrackResponse track)
+            => track.Track.TimePlayed?.DateTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
     }
 }

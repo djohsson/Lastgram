@@ -14,6 +14,11 @@ namespace Lastgram.Data
 
         public async Task AddUserAsync(int telegramUserId, string lastFmUsername)
         {
+            if (string.IsNullOrEmpty(lastFmUsername))
+            {
+                return;
+            }
+
             var user = await context.Users.FindAsync(telegramUserId);
 
             if (user == null)

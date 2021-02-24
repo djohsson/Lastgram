@@ -12,7 +12,7 @@ namespace LastgramTest
     [TestFixture]
     class NowPlayingServiceTest
     {
-        private INowPlayingService nowPlayingService;
+        private INowPlayingCommand nowPlayingService;
         private Mock<IUserRepository> userRepositoryMock;
         private Mock<ILastFmService> lastfmServiceMock;
         private Mock<ISpotifyService> spotifyServiceMock;
@@ -23,7 +23,7 @@ namespace LastgramTest
             userRepositoryMock = new Mock<IUserRepository>();
             lastfmServiceMock = new Mock<ILastFmService>();
             spotifyServiceMock = new Mock<ISpotifyService>();
-            nowPlayingService = new NowPlayingService(userRepositoryMock.Object, lastfmServiceMock.Object, spotifyServiceMock.Object);
+            nowPlayingService = new NowPlayingCommand(userRepositoryMock.Object, lastfmServiceMock.Object, spotifyServiceMock.Object);
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace LastgramTest
         {
             string lastFmUsername = "John";
 
-            nowPlayingService.HandleCommandAsync(
+            nowPlayingService.ExecuteCommandAsync(
                 new Message() {
                     From = new User()
                     {
@@ -54,7 +54,7 @@ namespace LastgramTest
             userRepositoryMock.Setup(m => m.TryGetUserAsync(It.IsAny<int>())).ReturnsAsync(lastFmUsername);
             lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
 
-            nowPlayingService.HandleCommandAsync(
+            nowPlayingService.ExecuteCommandAsync(
                 new Message()
                 {
                     From = new User()
@@ -77,7 +77,7 @@ namespace LastgramTest
         [Test]
         public void DoNotAddUserToRepositoryIfTemporary()
         {
-            nowPlayingService.HandleCommandAsync(
+            nowPlayingService.ExecuteCommandAsync(
                 new Message()
                 {
                     From = new User()
@@ -102,7 +102,7 @@ namespace LastgramTest
             userRepositoryMock.Setup(m => m.TryGetUserAsync(It.IsAny<int>())).ReturnsAsync(string.Empty);
             lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
 
-            nowPlayingService.HandleCommandAsync(
+            nowPlayingService.ExecuteCommandAsync(
                 new Message()
                 {
                     From = new User()

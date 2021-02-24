@@ -1,6 +1,4 @@
 ﻿using Lastgram.Models;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lastgram.Data
@@ -16,6 +14,11 @@ namespace Lastgram.Data
 
         public async Task AddSpotifyTrackAsync(string artist, string track, string url)
         {
+            if (string.IsNullOrEmpty(url) || (string.IsNullOrEmpty(artist) && string.IsNullOrEmpty(track)))
+            {
+                return;
+            }
+
             string artistAndName = FormatArtistAndTrack(artist, track);
             string formattedArtist = artist.Length > 255 ? artist.Substring(0, 255) : artist;
             string formattedTrack = track.Length > 255 ? track.Substring(0, 255) : track;

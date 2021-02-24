@@ -1,6 +1,5 @@
 ﻿using Lastgram.Commands;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -16,7 +15,6 @@ namespace Lastgram
         private readonly HttpClient httpClient;
         private readonly ICommandHandler commandHandler;
 
-        private IReadOnlyList<BotCommand> commands;
         private DateTime started;
 
         public Bot(ICommandHandler commandHandler)
@@ -26,15 +24,15 @@ namespace Lastgram
             httpClient = new HttpClient();
             string apiKey = Environment.GetEnvironmentVariable("LASTGRAM_TELEGRAM_KEY");
             telegramBotClient = new TelegramBotClient(apiKey, httpClient);
-
-            CreateCommands();
         }
 
         public async Task StartAsync()
         {
             started = DateTime.UtcNow;
 
+            var commands = commandHandler.GetBotCommands();
             await telegramBotClient.SetMyCommandsAsync(commands);
+
             telegramBotClient.OnMessage += OnMessage;
             telegramBotClient.StartReceiving();
         }
@@ -45,23 +43,6 @@ namespace Lastgram
             telegramBotClient.OnMessage -= OnMessage;
         }
 
-        private void CreateCommands()
-        {
-            commands = new List<BotCommand>
-            {
-                new BotCommand
-                {
-                    Command = "np",
-                    Description = "Get a Spotify link to the currently playing song. /np [username [temp]]"
-                },
-                new BotCommand
-                {
-                    Command = "forgetme",
-                    Description = "Remove entries related to you from the database"
-                },
-            };
-        }
-
         private async void OnMessage(object sender, MessageEventArgs e)
         {
             if (e.Message.Date.ToUniversalTime() < started)
@@ -69,19 +50,14 @@ namespace Lastgram
                 return;
             }
 
-            if (!MessageHelper.TryParseCommandType(e.Message, out var command))
-            {
-                return;
-            }
-
-            await ExecuteCommand(e, command);
+            await ExecuteCommandAsync(e);
         }
 
-        private async Task ExecuteCommand(MessageEventArgs eventArgs, CommandType commandType)
+        private async Task ExecuteCommandAsync(MessageEventArgs eventArgs)
         {
             try
             {
-                await commandHandler.HandleCommandAsync(commandType, eventArgs.Message, SendMessageAsync);
+                await commandHandler.ExecuteCommandAsync(eventArgs.Message, SendMessageAsync);
             }
             catch (Exception e)
             {

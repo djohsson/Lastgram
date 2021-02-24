@@ -11,20 +11,20 @@ namespace LastgramTest
     [TestFixture]
     class ForgetMeServiceTest
     {
-        private IForgetMeService forgetMeService;
+        private IForgetMeCommand forgetMeService;
         private Mock<IUserRepository> userRepositoryMock;
 
         [SetUp]
         public void Setup()
         {
             userRepositoryMock = new Mock<IUserRepository>();
-            forgetMeService = new ForgetMeService(userRepositoryMock.Object);
+            forgetMeService = new ForgetMeCommand(userRepositoryMock.Object);
         }
 
         [Test]
         public void ShouldRemoveFromRepository()
         {
-            forgetMeService.HandleCommandAsync(
+            forgetMeService.ExecuteCommandAsync(
                 new Message()
                 {
                     From = new User()

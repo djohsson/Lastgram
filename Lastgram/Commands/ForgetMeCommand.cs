@@ -5,16 +5,20 @@ using Telegram.Bot.Types;
 
 namespace Lastgram.Commands
 {
-    public class ForgetMeService : IForgetMeService
+    public class ForgetMeCommand : IForgetMeCommand
     {
         private readonly IUserRepository userRepository;
 
-        public ForgetMeService(IUserRepository userRepository)
+        public ForgetMeCommand(IUserRepository userRepository)
         {
             this.userRepository = userRepository;
         }
 
-        public async Task HandleCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
+        public string CommandName => "forgetme";
+
+        public string CommandDescription => "Remove entries related to you from the database";
+
+        public async Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
             await userRepository.RemoveUserAsync(message.From.Id);
 
