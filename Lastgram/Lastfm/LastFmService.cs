@@ -21,15 +21,7 @@ namespace Lastgram.Lastfm
         {
             var response = await lastfmClient.User.GetRecentScrobbles(username, count: 1);
 
-            LastTrack track = null;
-
-            if (response.Any())
-            {
-                track = response.Content.FirstOrDefault(t => t.TimePlayed != null)
-                    ?? response.Content.FirstOrDefault();
-            }
-
-            return new LastfmTrackResponse(track, response.Success && response.Content.Any());
+            return new LastfmTrackResponse(response.FirstOrDefault(), response.Success && response.Any());
         }
     }
 }
