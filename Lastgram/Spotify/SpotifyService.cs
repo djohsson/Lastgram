@@ -40,6 +40,7 @@ namespace Lastgram.Spotify
                 return url;
             }
 
+            // This does not fix all of the potential raceconditions in this file. But ehh, it will probably never happen :^)
             await semaphore.WaitAsync();
 
             await RenewAccessTokenIfExpiredAsync();

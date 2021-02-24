@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
-namespace Lastgram
+namespace Lastgram.Utils
 {
     public static class Hasher
     {
