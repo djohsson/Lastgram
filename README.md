@@ -25,3 +25,6 @@ https://github.com/JohnnyCrazy/SpotifyAPI-NET
 
 ### Inflatable.Lastfm
 https://github.com/inflatablefriends/lastfm
+
+### efcore.pg
+https://github.com/npgsql/efcore.pg
