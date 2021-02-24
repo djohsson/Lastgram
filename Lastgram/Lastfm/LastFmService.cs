@@ -1,4 +1,5 @@
 ﻿using IF.Lastfm.Core.Api;
+using IF.Lastfm.Core.Objects;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +21,15 @@ namespace Lastgram.Lastfm
         {
             var response = await lastfmClient.User.GetRecentScrobbles(username, count: 1);
 
-            return new LastfmTrackResponse(response.Content.FirstOrDefault(), response.Success && response.Content.Any());
+            LastTrack track = null;
+
+            if (response.Any())
+            {
+                track = response.Content.FirstOrDefault(t => t.TimePlayed != null)
+                    ?? response.Content.FirstOrDefault();
+            }
+
+            return new LastfmTrackResponse(track, response.Success && response.Content.Any());
         }
     }
 }
