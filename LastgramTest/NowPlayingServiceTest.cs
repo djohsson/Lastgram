@@ -14,14 +14,14 @@ namespace LastgramTest
     {
         private INowPlayingCommand nowPlayingService;
         private Mock<IUserRepository> userRepositoryMock;
-        private Mock<ILastFmService> lastfmServiceMock;
+        private Mock<ILastfmService> lastfmServiceMock;
         private Mock<ISpotifyService> spotifyServiceMock;
 
         [SetUp]
         public void Setup()
         {
             userRepositoryMock = new Mock<IUserRepository>();
-            lastfmServiceMock = new Mock<ILastFmService>();
+            lastfmServiceMock = new Mock<ILastfmService>();
             spotifyServiceMock = new Mock<ISpotifyService>();
             nowPlayingService = new NowPlayingCommand(userRepositoryMock.Object, lastfmServiceMock.Object, spotifyServiceMock.Object);
         }

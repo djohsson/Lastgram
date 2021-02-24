@@ -14,13 +14,13 @@ namespace Lastgram.Commands
     public class NowPlayingCommand : INowPlayingCommand
     {
         private readonly IUserRepository userRepository;
-        private readonly ILastFmService lastFmService;
+        private readonly ILastfmService lastfmService;
         private readonly ISpotifyService spotifyService;
 
-        public NowPlayingCommand(IUserRepository userRepository, ILastFmService lastFmService, ISpotifyService spotifyService)
+        public NowPlayingCommand(IUserRepository userRepository, ILastfmService lastfmService, ISpotifyService spotifyService)
         {
             this.userRepository = userRepository;
-            this.lastFmService = lastFmService;
+            this.lastfmService = lastfmService;
             this.spotifyService = spotifyService;
         }
 
@@ -65,7 +65,7 @@ namespace Lastgram.Commands
                 return;
             }
 
-            var track = await lastFmService.GetNowPlayingAsync(lastfmUsername);
+            var track = await lastfmService.GetNowPlayingAsync(lastfmUsername);
             string response;
 
             if (track.Success)

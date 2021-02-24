@@ -2,7 +2,7 @@
 
 namespace Lastgram.Lastfm
 {
-    public interface ILastFmService
+    public interface ILastfmService
     {
         Task<LastfmTrackResponse> GetNowPlayingAsync(string username);
     }
