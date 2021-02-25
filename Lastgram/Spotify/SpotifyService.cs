@@ -67,7 +67,7 @@ namespace Lastgram.Spotify
 
         private async Task RenewAccessTokenIfExpiredAsync()
         {
-            if (AccessTokenIsExpired())
+            if (!AccessTokenIsExpired())
             {
                 return;
             }
@@ -76,7 +76,11 @@ namespace Lastgram.Spotify
         }
 
         private bool AccessTokenIsExpired()
-            => tokenResponse.CreatedAt.AddSeconds(tokenResponse.ExpiresIn).AddMinutes(5) > DateTime.UtcNow;
+        {
+            var expiresAt = tokenResponse.CreatedAt.AddSeconds(tokenResponse.ExpiresIn).Subtract(TimeSpan.FromMinutes(5));
+
+            return expiresAt > DateTime.UtcNow;
+        }
 
         private async Task RenewAccessTokenAsync()
         {
