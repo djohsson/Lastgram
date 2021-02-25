@@ -79,7 +79,7 @@ namespace Lastgram.Spotify
         {
             var expiresAt = tokenResponse.CreatedAt.AddSeconds(tokenResponse.ExpiresIn).Subtract(TimeSpan.FromMinutes(5));
 
-            return expiresAt > DateTime.UtcNow;
+            return expiresAt < DateTime.UtcNow;
         }
 
         private async Task RenewAccessTokenAsync()
