@@ -1,8 +1,12 @@
 ---
-name: 'build images'
+name: 'Build and push Docker images'
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - .NET
+    types: 
+      - completed
     branches:
       - main
 jobs:
