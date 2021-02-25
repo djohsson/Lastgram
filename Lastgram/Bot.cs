@@ -23,13 +23,8 @@ namespace Lastgram
 
             httpClient = new HttpClient();
 
-            string apiKey;
+            string apiKey = GetApiKey();
 
-#if DEBUG
-            apiKey = Environment.GetEnvironmentVariable("LASTGRAM_TELEGRAM_DEBUG_KEY");
-#else
-            apiKey = Environment.GetEnvironmentVariable("LASTGRAM_TELEGRAM_KEY");
-#endif
             telegramBotClient = new TelegramBotClient(apiKey, httpClient);
         }
 
@@ -83,6 +78,17 @@ namespace Lastgram
                 disableWebPagePreview: true,
                 disableNotification: true
             );
+        }
+
+        private static string GetApiKey()
+        {
+            string apiKey;
+#if DEBUG
+            apiKey = Environment.GetEnvironmentVariable("LASTGRAM_TELEGRAM_DEBUG_KEY");
+#else
+            apiKey = Environment.GetEnvironmentVariable("LASTGRAM_TELEGRAM_KEY");
+#endif
+            return apiKey;
         }
     }
 }
