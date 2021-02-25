@@ -2,6 +2,7 @@
 services:
     lastgram:
         build: .
+        image: davjoh/lastgram:latest
         environment:
             - "LASTGRAM_CONNECTIONSTRING=${LASTGRAM_DOCKER_CONNECTIONSTRING}"
             - "LASTGRAM_LASTFM_APIKEY=${LASTGRAM_LASTFM_APIKEY}"
