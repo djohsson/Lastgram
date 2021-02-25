@@ -92,25 +92,27 @@ namespace Lastgram.Commands
             string artistAndName = HttpUtility.HtmlEncode($"{track.Track.ArtistName} - {track.Track.Name}");
             string username = HttpUtility.HtmlEncode(lastfmUsername);
 
-            if (!string.IsNullOrEmpty(url) && (track.Track.IsNowPlaying ?? false))
+            if (track.Track.IsNowPlaying ?? false)
             {
-                // Now playing, and found a Spotify URL
-                response = $"<i>{username} is currently playing</i>\nSpotify: <a href=\"{url}\"><b>{artistAndName}</b></a>";
-            }
-            else if (!string.IsNullOrEmpty(url))
-            {
-                // Not currently playing, but found a Spotify URL
-                response = $"<i>{username} played</i>\n<a href=\"{url}\"><b>{artistAndName}</b></a>\n<i>on {GetTimePlayed(track)}</i>";
-            }
-            else if(string.IsNullOrEmpty(url))
-            {
-                // Now playing, but did not find a Spotify URL
-                response = $"<i>{username} is currently playing</i>\nLastfm: <a href=\"{track.Track.Url}\"><b>{artistAndName}</b></a>";
+                response = $"<i>{username} is currently playing</i>\n";
             }
             else
             {
-                // Not currently playing, and did not find a Spotify URL
-                response = $"<i>{username} played</i>\nLastfm: <a href=\"{track.Track.Url}\"><b>{artistAndName}</b></a>\n<i>on {GetTimePlayed(track)}</i>";
+                response = $"<i>{username} played</i>\n";
+            }
+
+            response += $"<b>{artistAndName}</b>\n";
+
+            if (!string.IsNullOrEmpty(url))
+            {
+                response += $"<a href =\"{url}\">Spotify</a> ";
+            }
+
+            response += $"<a href =\"{track.Track.Url}\">Lastfm</a>\n";
+
+            if (!track.Track.IsNowPlaying ?? true)
+            {
+                response += $"<i>on {GetTimePlayed(track)}</i>";
             }
 
             return response;
