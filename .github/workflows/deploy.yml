@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  Test:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -23,7 +23,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal
 
   Deploy:
-    needs: Test
+    needs: test
     - uses: dorny/paths-filter@v2
       id: changes
       with:
