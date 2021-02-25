@@ -9,6 +9,8 @@ on:
       - completed
     branches:
       - main
+    paths-ignore:
+      - 'LastgramTest/**'
 jobs:
   docker:
     runs-on: ubuntu-latest
