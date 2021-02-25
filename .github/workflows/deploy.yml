@@ -24,7 +24,14 @@ jobs:
 
   Deploy:
     needs: Test
-    if: github.ref == 'refs/heads/main'
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          Lastgram:
+            - 'Lastgram/**'
+
+    if: steps.changes.outputs.Lastgram == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
