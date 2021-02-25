@@ -105,7 +105,7 @@ namespace Lastgram.Commands
 
             if (!string.IsNullOrEmpty(url))
             {
-                response += $"<a href =\"{url}\">Spotify</a> ";
+                response += $"<a href =\"{url}\">Spotify</a> | ";
             }
 
             response += $"<a href =\"{track.Track.Url}\">Lastfm</a>\n";

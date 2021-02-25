@@ -22,7 +22,14 @@ namespace Lastgram
             this.commandHandler = commandHandler;
 
             httpClient = new HttpClient();
-            string apiKey = Environment.GetEnvironmentVariable("LASTGRAM_TELEGRAM_KEY");
+
+            string apiKey;
+
+#if DEBUG
+            apiKey = Environment.GetEnvironmentVariable("LASTGRAM_TELEGRAM_DEBUG_KEY");
+#else
+            apiKey = Environment.GetEnvironmentVariable("LASTGRAM_TELEGRAM_KEY");
+#endif
             telegramBotClient = new TelegramBotClient(apiKey, httpClient);
         }
 
