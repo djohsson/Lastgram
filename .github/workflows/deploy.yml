@@ -22,7 +22,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
 
-  Deploy:
+  deploy:
     needs: test
     - uses: dorny/paths-filter@v2
       id: changes
