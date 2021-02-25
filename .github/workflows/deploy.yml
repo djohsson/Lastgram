@@ -28,7 +28,7 @@ jobs:
     
     steps:
       - name: Check for changes in code
-      - uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v2
         id: changes
         with:
           filters: |
