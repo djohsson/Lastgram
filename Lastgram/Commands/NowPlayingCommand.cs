@@ -5,6 +5,7 @@ using Lastgram.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using Telegram.Bot.Types;
@@ -86,29 +87,30 @@ namespace Lastgram.Commands
 
         private static string GetResponseMessage(string lastfmUsername, LastfmTrackResponse track, string url)
         {
-            // Clean up this function plz
-
             string response;
-            string artistAndName = HttpUtility.HtmlEncode($"{track.Track.ArtistName} - {track.Track.Name}");
-            string username = HttpUtility.HtmlEncode(lastfmUsername);
+            string encodedArtistAndName = HttpUtility.HtmlEncode($"{track.Track.ArtistName} - {track.Track.Name}");
+            string encodedUsername = HttpUtility.HtmlEncode(lastfmUsername);
+
+            // Lastfm URL can contain '"' and break Telegram's HTML parser
+            string encodedLastfmUrl = Regex.Replace(track.Track.Url.AbsoluteUri, "([\"])", @"\$1");
 
             if (track.Track.IsNowPlaying ?? false)
             {
-                response = $"<i>{username} is currently playing</i>\n";
+                response = $"<i>{encodedUsername} is currently playing</i>\n";
             }
             else
             {
-                response = $"<i>{username} played</i>\n";
+                response = $"<i>{encodedUsername} played</i>\n";
             }
 
-            response += $"<b>{artistAndName}</b>\n";
+            response += $"<b>{encodedArtistAndName}</b>\n";
 
             if (!string.IsNullOrEmpty(url))
             {
                 response += $"<a href =\"{url}\">Spotify</a> | ";
             }
 
-            response += $"<a href =\"{track.Track.Url}\">Lastfm</a>\n";
+            response += $"<a href =\"{encodedLastfmUrl}\">Lastfm</a>\n";
 
             if (!track.Track.IsNowPlaying ?? true)
             {
