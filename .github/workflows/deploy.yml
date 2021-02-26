@@ -67,7 +67,7 @@ jobs:
         uses: docker/setup-qemu-action@master
         if: steps.changes.outputs.Lastgram == 'true'
         with:
-          platforms: all
+          platforms: linux/amd64,linux/arm/v7
 
       - name: Set up Docker Buildx
         id: buildx
