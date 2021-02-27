@@ -7,7 +7,7 @@ using NUnit.Framework;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 
-namespace LastgramTest
+namespace LastgramTest.Commands
 {
     [TestFixture]
     class NowPlayingServiceTest
@@ -42,7 +42,7 @@ namespace LastgramTest
                 (chat, message) => Task.CompletedTask
             );
 
-            userRepositoryMock.Verify(mocks => mocks.AddUserAsync(It.Is<int>(id => id == 1), It.Is<string>(username => username == lastFmUsername)), Times.Once);
+            userRepositoryMock.Verify(mocks => mocks.AddOrUpdateUserAsync(It.Is<int>(id => id == 1), It.Is<string>(username => username == lastFmUsername)), Times.Once);
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace LastgramTest
                 (chat, message) => Task.CompletedTask
             );
 
-            userRepositoryMock.Verify(mocks => mocks.AddUserAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+            userRepositoryMock.Verify(mocks => mocks.AddOrUpdateUserAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
         }
 
         [Test]
@@ -120,7 +120,7 @@ namespace LastgramTest
             );
 
             Assert.AreEqual("Could not find <i>John</i> on last.fm", telegramUsername);
-            userRepositoryMock.Verify(m => m.AddUserAsync(It.IsAny<int>(), lastFmUsername), Times.Once);
+            userRepositoryMock.Verify(m => m.AddOrUpdateUserAsync(It.IsAny<int>(), lastFmUsername), Times.Once);
         }
     }
 }

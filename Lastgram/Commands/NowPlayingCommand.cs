@@ -45,7 +45,7 @@ namespace Lastgram.Commands
                         ? message.From.FirstName
                         : message.From.Username;
 
-                    await userRepository.AddUserAsync(message.From.Id, lastfmUsername);
+                    await userRepository.AddOrUpdateUserAsync(message.From.Id, lastfmUsername);
                 }
             }
             else if (parameters.Count == 1)
@@ -53,7 +53,7 @@ namespace Lastgram.Commands
                 // User has provided a Last.fm username
                 lastfmUsername = parameters.First();
 
-                await userRepository.AddUserAsync(message.From.Id, lastfmUsername);
+                await userRepository.AddOrUpdateUserAsync(message.From.Id, lastfmUsername);
             }
             else if (parameters.Count == 2 && parameters.Last().ToLowerInvariant().Equals("temp"))
             {

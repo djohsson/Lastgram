@@ -4,7 +4,7 @@ namespace Lastgram.Data
 {
     public interface IUserRepository
     {
-        Task AddUserAsync(int telegramUserId, string lastFmUsername);
+        Task AddOrUpdateUserAsync(int telegramUserId, string lastFmUsername);
 
         Task<string> TryGetUserAsync(int telegramUserId);
 

@@ -5,7 +5,7 @@ using NUnit.Framework;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 
-namespace LastgramTest
+namespace LastgramTest.Commands
 {
     [TestFixture]
     class ForgetMeServiceTest

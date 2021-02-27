@@ -3,16 +3,16 @@ using System.Threading.Tasks;
 
 namespace Lastgram.Data
 {
-    internal class UserRepository : IUserRepository
+    public  class UserRepository : IUserRepository
     {
-        private readonly MyDbContext context;
+        private readonly IMyDbContext context;
 
-        public UserRepository(MyDbContext context)
+        public UserRepository(IMyDbContext context)
         {
             this.context = context;
         }
 
-        public async Task AddUserAsync(int telegramUserId, string lastFmUsername)
+        public async Task AddOrUpdateUserAsync(int telegramUserId, string lastFmUsername)
         {
             if (string.IsNullOrEmpty(lastFmUsername))
             {
@@ -46,7 +46,7 @@ namespace Lastgram.Data
                 return;
             }
 
-            context.Remove(user);
+            context.Users.Remove(user);
 
             await context.SaveChangesAsync();
         }

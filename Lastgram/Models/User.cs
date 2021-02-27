@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Lastgram.Models
 {
@@ -9,5 +10,17 @@ namespace Lastgram.Models
 
         [Required]
         public string LastfmUsername { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is User user &&
+                   TelegramUserId == user.TelegramUserId &&
+                   LastfmUsername == user.LastfmUsername;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(TelegramUserId, LastfmUsername);
+        }
     }
 }

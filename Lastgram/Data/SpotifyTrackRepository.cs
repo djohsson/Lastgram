@@ -6,9 +6,9 @@ namespace Lastgram.Data
 {
     public class SpotifyTrackRepository : ISpotifyTrackRepository
     {
-        private readonly MyDbContext context;
+        private readonly IMyDbContext context;
 
-        public SpotifyTrackRepository(MyDbContext context)
+        public SpotifyTrackRepository(IMyDbContext context)
         {
             this.context = context;
         }

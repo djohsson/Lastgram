@@ -19,14 +19,11 @@ namespace Lastgram.Spotify
         private readonly SemaphoreSlim semaphore;
 
         private SpotifyClient spotifyClient;
-        private ClientCredentialsTokenResponse tokenResponse;
+        private ClientCredentialsTokenResponse tokenResponse = null;
 
         public SpotifyService(ISpotifyTrackRepository spotifyTrackRepository)
         {
             semaphore = new SemaphoreSlim(1, 1);
-
-            // Not very testable...
-            RenewAccessTokenAsync().Wait();
 
             this.spotifyTrackRepository = spotifyTrackRepository;
         }
@@ -77,6 +74,11 @@ namespace Lastgram.Spotify
 
         private bool AccessTokenIsExpired()
         {
+            if (tokenResponse == null)
+            {
+                return true;
+            }
+
             var expiresAt = tokenResponse.CreatedAt.AddSeconds(tokenResponse.ExpiresIn).Subtract(TimeSpan.FromMinutes(5));
 
             return expiresAt < DateTime.UtcNow;

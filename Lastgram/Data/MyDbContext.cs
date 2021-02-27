@@ -4,11 +4,11 @@ using System;
 
 namespace Lastgram.Data
 {
-    public class MyDbContext : DbContext, IMyDbContext
+    public class MyDbContext : DbContext, IMyDbContext, IDisposable
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public MyDbContext(DbContextOptions<MyDbContext> options)
+            : base(options)
         {
-            optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("LASTGRAM_CONNECTIONSTRING"));
         }
 
         public DbSet<User> Users { get; set; }
