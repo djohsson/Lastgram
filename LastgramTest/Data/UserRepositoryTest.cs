@@ -119,8 +119,8 @@ namespace LastgramTest.Data
             }
         }
 
-        [TestCase(1, true, TestName = "Existing user, should be returned")]
-        [TestCase(4, false, TestName = "Non existing user, should return null")]
+        [TestCase(1, true)]
+        [TestCase(4, false)]
         public async Task TryGetUserAsync(int telegramUserId, bool exists)
         {
             using (var context = new MyDbContext(options))

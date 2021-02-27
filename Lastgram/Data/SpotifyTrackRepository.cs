@@ -1,5 +1,6 @@
 ﻿using Lastgram.Models;
 using Lastgram.Utils;
+using System;
 using System.Threading.Tasks;
 
 namespace Lastgram.Data
@@ -15,7 +16,7 @@ namespace Lastgram.Data
 
         public async Task AddSpotifyTrackAsync(string artist, string track, string url)
         {
-            if (string.IsNullOrEmpty(url) || (string.IsNullOrEmpty(artist) && string.IsNullOrEmpty(track)))
+            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(artist) || string.IsNullOrEmpty(track))
             {
                 return;
             }
@@ -34,7 +35,14 @@ namespace Lastgram.Data
 
             await context.SpotifyTracks.AddAsync(spotifyTrack);
 
-            await context.SaveChangesAsync();
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public async Task<string> TryGetSpotifyTrackUrlAsync(string artist, string track)
