@@ -59,9 +59,7 @@ namespace Lastgram.Spotify
             {
                 url = await SearchForTrackOnSpotifyAsync(artistName, track);
 
-                Artist artist = await artistService.GetOrAddArtistAsync(artistName);
-
-                await spotifyTrackRepository.AddSpotifyTrackAsync(artist, track, url);
+                await AddTrackToDatabase(artistName, track, url);
             }
             catch (APIException e)
             {
@@ -69,6 +67,27 @@ namespace Lastgram.Spotify
             }
 
             return url;
+        }
+
+        private async Task<string> SearchForTrackOnSpotifyAsync(string artist, string track)
+        {
+            SearchRequest searchRequest = CreateSearchRequest(artist, track);
+
+            var trackResponse = await spotifyClient.Search.Item(searchRequest);
+
+            if (!trackResponse.Tracks.Items.Any())
+            {
+                return null;
+            }
+
+            return trackResponse.Tracks.Items.First().ExternalUrls["spotify"];
+        }
+
+        private async Task AddTrackToDatabase(string artistName, string track, string url)
+        {
+            Artist artist = await artistService.GetOrAddArtistAsync(artistName);
+
+            await spotifyTrackRepository.AddSpotifyTrackAsync(artist, track, url);
         }
 
         private async Task RenewAccessTokenIfExpiredAsync()
@@ -98,20 +117,6 @@ namespace Lastgram.Spotify
             tokenResponse = await oauthClient.RequestToken(credentialsRequest);
 
             spotifyClient = spotifyClientProvider(ClientConfig.WithToken(tokenResponse.AccessToken));
-        }
-
-        private async Task<string> SearchForTrackOnSpotifyAsync(string artist, string track)
-        {
-            SearchRequest searchRequest = CreateSearchRequest(artist, track);
-
-            var trackResponse = await spotifyClient.Search.Item(searchRequest);
-
-            if (!trackResponse.Tracks.Items.Any())
-            {
-                return null;
-            }
-
-            return trackResponse.Tracks.Items.First().ExternalUrls["spotify"];
         }
 
         private static SearchRequest CreateSearchRequest(string artist, string track)
