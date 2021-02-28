@@ -3,7 +3,7 @@ using Lastgram.Utils;
 using System;
 using System.Threading.Tasks;
 
-namespace Lastgram.Data
+namespace Lastgram.Data.Repositories
 {
     public class SpotifyTrackRepository : ISpotifyTrackRepository
     {
@@ -14,22 +14,21 @@ namespace Lastgram.Data
             this.context = context;
         }
 
-        public async Task AddSpotifyTrackAsync(string artist, string track, string url)
+        public async Task AddSpotifyTrackAsync(Artist artist, string track, string url)
         {
-            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(artist) || string.IsNullOrEmpty(track))
+            if (artist == null || string.IsNullOrEmpty(url) || string.IsNullOrEmpty(track))
             {
                 return;
             }
 
-            string artistAndName = FormatArtistAndTrack(artist, track);
-            string formattedArtist = artist.Length > 255 ? artist.Substring(0, 255) : artist;
+            string artistAndName = FormatArtistAndTrack(artist.Name, track);
             string formattedTrack = track.Length > 255 ? track.Substring(0, 255) : track;
 
             var spotifyTrack = new SpotifyTrack
             {
                 Md5 = Hasher.CreateMD5(artistAndName),
                 Url = url,
-                Artist = formattedArtist,
+                Artist = artist,
                 Track = formattedTrack
             };
 

@@ -2,6 +2,7 @@
 using IF.Lastfm.Core.Api;
 using Lastgram.Commands;
 using Lastgram.Data;
+using Lastgram.Data.Repositories;
 using Lastgram.Lastfm;
 using Lastgram.Spotify;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +51,7 @@ namespace Lastgram
         private static void RegisterServices(ContainerBuilder builder)
         {
             builder.RegisterType<LastfmService>().As<ILastfmService>().SingleInstance();
+            builder.RegisterType<ArtistService>().As<IArtistService>().SingleInstance();
 
             RegisterSpotifyService(builder);
         }
@@ -77,6 +79,7 @@ namespace Lastgram
         {
             builder.RegisterType<UserRepository>().As<IUserRepository>().SingleInstance();
             builder.RegisterType<SpotifyTrackRepository>().As<ISpotifyTrackRepository>().SingleInstance();
+            builder.RegisterType<ArtistRepository>().As<IArtistRepository>().SingleInstance();
         }
 
         private static void RegisterCommands(ContainerBuilder builder)

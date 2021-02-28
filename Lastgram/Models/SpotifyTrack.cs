@@ -13,12 +13,12 @@ namespace Lastgram.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [MaxLength(255)]
-        public string Artist { get; set; }
-
-        [MaxLength(255)]
         public string Track { get; set; }
 
         [Required]
         public string Url { get; set; }
+
+        public int ArtistId { get; set; }
+        public Artist Artist { get; set; }
     }
 }

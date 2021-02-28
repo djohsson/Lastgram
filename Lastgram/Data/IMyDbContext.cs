@@ -14,6 +14,8 @@ namespace Lastgram.Data
 
         public DbSet<SpotifyTrack> SpotifyTracks { get; set; }
 
+        public DbSet<Artist> Artists { get; set; }
+
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

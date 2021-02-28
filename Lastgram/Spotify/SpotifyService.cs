@@ -1,4 +1,6 @@
 ﻿using Lastgram.Data;
+using Lastgram.Data.Repositories;
+using Lastgram.Models;
 using SpotifyAPI.Web;
 using System;
 using System.Linq;
@@ -13,6 +15,7 @@ namespace Lastgram.Spotify
 
         private readonly ISpotifyTrackRepository spotifyTrackRepository;
         private readonly IOAuthClient oauthClient;
+        private readonly IArtistService artistService;
         private readonly Func<SpotifyClientConfig, ISpotifyClient> spotifyClientProvider;
         private readonly ClientCredentialsRequest credentialsRequest;
         private readonly SemaphoreSlim semaphore;
@@ -23,20 +26,22 @@ namespace Lastgram.Spotify
         public SpotifyService(
             ISpotifyTrackRepository spotifyTrackRepository,
             IOAuthClient oauthClient,
+            IArtistService artistService,
             Func<SpotifyClientConfig, ISpotifyClient> spotifyClientProvider,
             Func<ClientCredentialsRequest> clientCredentialsRequestProvider)
         {
             this.spotifyTrackRepository = spotifyTrackRepository;
             this.oauthClient = oauthClient;
+            this.artistService = artistService;
             this.spotifyClientProvider = spotifyClientProvider;
 
             semaphore = new SemaphoreSlim(1, 1);
             credentialsRequest = clientCredentialsRequestProvider();
         }
 
-        public async Task<string> TryGetLinkToTrackAsync(string artist, string track)
+        public async Task<string> TryGetLinkToTrackAsync(string artistName, string track)
         {
-            var url = await spotifyTrackRepository.TryGetSpotifyTrackUrlAsync(artist, track);
+            var url = await spotifyTrackRepository.TryGetSpotifyTrackUrlAsync(artistName, track);
 
             if (url != null)
             {
@@ -52,7 +57,9 @@ namespace Lastgram.Spotify
 
             try
             {
-                url = await SearchForTrackOnSpotifyAsync(artist, track);
+                url = await SearchForTrackOnSpotifyAsync(artistName, track);
+
+                Artist artist = await artistService.GetOrAddArtistAsync(artistName);
 
                 await spotifyTrackRepository.AddSpotifyTrackAsync(artist, track, url);
             }

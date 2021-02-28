@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Lastgram.Data
+namespace Lastgram.Data.Repositories
 {
     public interface IUserRepository
     {

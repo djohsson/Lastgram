@@ -1,7 +1,7 @@
 ﻿using Lastgram.Models;
 using System.Threading.Tasks;
 
-namespace Lastgram.Data
+namespace Lastgram.Data.Repositories
 {
     public  class UserRepository : IUserRepository
     {

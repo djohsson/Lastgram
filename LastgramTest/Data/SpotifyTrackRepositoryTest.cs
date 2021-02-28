@@ -1,4 +1,5 @@
 ﻿using Lastgram.Data;
+using Lastgram.Data.Repositories;
 using Lastgram.Models;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -15,9 +16,9 @@ namespace LastgramTest.Data
 
         private static readonly List<SpotifyTrack> Tracks = new List<SpotifyTrack>()
         {
-            new SpotifyTrack() { Md5 = "C7662A41609BB5C4BF8F654FC4C866D9", CreatedAt = DateTime.UtcNow, Artist = "Evert Taube", Track = "Kinesiska Muren", Url = "www.evert.taube.se" },
-            new SpotifyTrack() { Md5 = "745944B338378F1DF655F02BDF3155E6", CreatedAt = DateTime.UtcNow, Artist = "Smash Mouth", Track = "All Star", Url = "www.google.com" },
-            new SpotifyTrack() { Md5 = "FDB4A9B6A9273BB70475E2AADD7544A0", CreatedAt = DateTime.UtcNow, Artist = "Donky Kong", Track = "DK Rap", Url = "www.donkeykong.dk" },
+            new SpotifyTrack() { Md5 = "C7662A41609BB5C4BF8F654FC4C866D9", CreatedAt = DateTime.UtcNow, Artist = new Artist() { Name = "Evert Taube" }, Track = "Kinesiska Muren", Url = "www.evert.taube.se" },
+            new SpotifyTrack() { Md5 = "745944B338378F1DF655F02BDF3155E6", CreatedAt = DateTime.UtcNow, Artist = new Artist() { Name = "Smash Mouth" }, Track = "All Star", Url = "www.google.com" },
+            new SpotifyTrack() { Md5 = "FDB4A9B6A9273BB70475E2AADD7544A0", CreatedAt = DateTime.UtcNow, Artist = new Artist() { Name = "Donkey Kong" }, Track = "DK Rap", Url = "www.donkeykong.dk" },
         };
 
         [SetUp]
@@ -41,12 +42,12 @@ namespace LastgramTest.Data
             {
                 var spotifyTrackRepository = new SpotifyTrackRepository(context);
 
-                await spotifyTrackRepository.AddSpotifyTrackAsync("Noisestorm", "Crab Rave", "www.youtube.com");
+                await spotifyTrackRepository.AddSpotifyTrackAsync(new Artist() { Name = "Noisestorm" }, "Crab Rave", "www.youtube.com");
             }
 
             using (var context = new MyDbContext(options))
             {
-                var track = await context.SpotifyTracks.FirstOrDefaultAsync(t => t.Artist.Equals("Noisestorm"));
+                var track = await context.SpotifyTracks.FirstOrDefaultAsync(t => t.Artist.Name.Equals("Noisestorm"));
 
                 Assert.NotNull(track);
             }
@@ -62,7 +63,7 @@ namespace LastgramTest.Data
             {
                 var spotifyTrackRepository = new SpotifyTrackRepository(context);
 
-                await spotifyTrackRepository.AddSpotifyTrackAsync(artist, trackName, url);
+                await spotifyTrackRepository.AddSpotifyTrackAsync(new Artist() { Name = artist }, trackName, url);
             }
 
             using (var context = new MyDbContext(options))
@@ -80,7 +81,7 @@ namespace LastgramTest.Data
             {
                 var spotifyTrackRepository = new SpotifyTrackRepository(context);
 
-                await spotifyTrackRepository.AddSpotifyTrackAsync(Tracks[0].Artist, Tracks[0].Track, Tracks[0].Url);
+                await spotifyTrackRepository.AddSpotifyTrackAsync(new Artist() { Name = Tracks[0].Artist.Name }, Tracks[0].Track, Tracks[0].Url);
             }
 
             using (var context = new MyDbContext(options))

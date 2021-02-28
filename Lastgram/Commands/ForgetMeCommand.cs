@@ -1,4 +1,4 @@
-﻿using Lastgram.Data;
+﻿using Lastgram.Data.Repositories;
 using System;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
