@@ -8,14 +8,14 @@ namespace Lastgram.Data
 {
     public interface IMyDbContext
     {
-        public DatabaseFacade Database { get; }
+        DatabaseFacade Database { get; }
 
-        public DbSet<User> Users { get; set; }
+        DbSet<User> Users { get; set; }
 
-        public DbSet<SpotifyTrack> SpotifyTracks { get; set; }
+        DbSet<SpotifyTrack> SpotifyTracks { get; set; }
 
-        public DbSet<Artist> Artists { get; set; }
+        DbSet<Artist> Artists { get; set; }
 
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
