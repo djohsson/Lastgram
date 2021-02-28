@@ -9,23 +9,29 @@ namespace Lastgram.Spotify
 {
     public class SpotifyService : ISpotifyService
     {
+        private static readonly SpotifyClientConfig ClientConfig = SpotifyClientConfig.CreateDefault();
         private static readonly ClientCredentialsRequest CredentialsRequest = new ClientCredentialsRequest(
             Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTID"),
             Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTSECRET"));
-        private static readonly SpotifyClientConfig ClientConfig = SpotifyClientConfig.CreateDefault();
-        private static readonly OAuthClient OAuthClient = new OAuthClient(ClientConfig);
 
         private readonly ISpotifyTrackRepository spotifyTrackRepository;
+        private readonly IOAuthClient oauthClient;
+        private readonly Func<SpotifyClientConfig, ISpotifyClient> spotifyClientProvider;
         private readonly SemaphoreSlim semaphore;
 
-        private SpotifyClient spotifyClient;
+        private ISpotifyClient spotifyClient;
         private ClientCredentialsTokenResponse tokenResponse = null;
 
-        public SpotifyService(ISpotifyTrackRepository spotifyTrackRepository)
+        public SpotifyService(
+            ISpotifyTrackRepository spotifyTrackRepository,
+            IOAuthClient oauthClient,
+            Func<SpotifyClientConfig, ISpotifyClient> spotifyClientProvider)
         {
             semaphore = new SemaphoreSlim(1, 1);
 
             this.spotifyTrackRepository = spotifyTrackRepository;
+            this.oauthClient = oauthClient;
+            this.spotifyClientProvider = spotifyClientProvider;
         }
 
         public async Task<string> TryGetLinkToTrackAsync(string artist, string track)
@@ -82,9 +88,9 @@ namespace Lastgram.Spotify
 
         private async Task RenewAccessTokenAsync()
         {
-            tokenResponse = await OAuthClient.RequestToken(CredentialsRequest);
+            tokenResponse = await oauthClient.RequestToken(CredentialsRequest);
 
-            spotifyClient = new SpotifyClient(ClientConfig.WithToken(tokenResponse.AccessToken));
+            spotifyClient = spotifyClientProvider(ClientConfig.WithToken(tokenResponse.AccessToken));
         }
 
         private async Task<string> SearchForTrackOnSpotifyAsync(string artist, string track)

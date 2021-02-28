@@ -5,6 +5,7 @@ using Lastgram.Data;
 using Lastgram.Lastfm;
 using Lastgram.Spotify;
 using Microsoft.EntityFrameworkCore;
+using SpotifyAPI.Web;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,6 +50,14 @@ namespace Lastgram
         private static void RegisterServices(ContainerBuilder builder)
         {
             builder.RegisterType<LastfmService>().As<ILastfmService>().SingleInstance();
+
+            builder.Register<Func<SpotifyClientConfig, ISpotifyClient>>(c =>
+            {
+                return config => new SpotifyClient(config);
+            });
+
+            builder.RegisterType<OAuthClient>().As<IOAuthClient>();
+
             builder.RegisterType<SpotifyService>().As<ISpotifyService>().SingleInstance();
         }
 
