@@ -11,8 +11,8 @@ namespace Lastgram.Spotify
     {
         private static readonly SpotifyClientConfig ClientConfig = SpotifyClientConfig.CreateDefault();
         private static readonly ClientCredentialsRequest CredentialsRequest = new ClientCredentialsRequest(
-            Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTID"),
-            Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTSECRET"));
+            Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTID") ?? string.Empty,
+            Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTSECRET") ?? string.Empty);
 
         private readonly ISpotifyTrackRepository spotifyTrackRepository;
         private readonly IOAuthClient oauthClient;
