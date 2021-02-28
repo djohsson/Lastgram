@@ -29,7 +29,11 @@ namespace LastgramTest.Spotify
 
             spotifyClientMock.SetupGet(m => m.Search).Returns(searchClientMock.Object);
 
-            spotifyService = new SpotifyService(spotifyTrackRepositoryMock.Object, oauthClientMock.Object, c => spotifyClientMock.Object);
+            spotifyService = new SpotifyService(
+                spotifyTrackRepositoryMock.Object,
+                oauthClientMock.Object,
+                c => spotifyClientMock.Object,
+                () => new ClientCredentialsRequest("id", "secret"));
         }
 
         [Test]

@@ -51,9 +51,21 @@ namespace Lastgram
         {
             builder.RegisterType<LastfmService>().As<ILastfmService>().SingleInstance();
 
+            RegisterSpotifyService(builder);
+        }
+
+        private static void RegisterSpotifyService(ContainerBuilder builder)
+        {
             builder.Register<Func<SpotifyClientConfig, ISpotifyClient>>(c =>
             {
                 return config => new SpotifyClient(config);
+            });
+
+            builder.Register<Func<ClientCredentialsRequest>>(c =>
+            {
+                return () => new ClientCredentialsRequest(
+                    Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTID"),
+                    Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTSECRET"));
             });
 
             builder.RegisterType<OAuthClient>().As<IOAuthClient>();

@@ -10,13 +10,11 @@ namespace Lastgram.Spotify
     public class SpotifyService : ISpotifyService
     {
         private static readonly SpotifyClientConfig ClientConfig = SpotifyClientConfig.CreateDefault();
-        private static readonly ClientCredentialsRequest CredentialsRequest = new ClientCredentialsRequest(
-            Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTID") ?? string.Empty,
-            Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTSECRET") ?? string.Empty);
 
         private readonly ISpotifyTrackRepository spotifyTrackRepository;
         private readonly IOAuthClient oauthClient;
         private readonly Func<SpotifyClientConfig, ISpotifyClient> spotifyClientProvider;
+        private readonly ClientCredentialsRequest credentialsRequest;
         private readonly SemaphoreSlim semaphore;
 
         private ISpotifyClient spotifyClient;
@@ -25,13 +23,15 @@ namespace Lastgram.Spotify
         public SpotifyService(
             ISpotifyTrackRepository spotifyTrackRepository,
             IOAuthClient oauthClient,
-            Func<SpotifyClientConfig, ISpotifyClient> spotifyClientProvider)
+            Func<SpotifyClientConfig, ISpotifyClient> spotifyClientProvider,
+            Func<ClientCredentialsRequest> clientCredentialsRequestProvider)
         {
-            semaphore = new SemaphoreSlim(1, 1);
-
             this.spotifyTrackRepository = spotifyTrackRepository;
             this.oauthClient = oauthClient;
             this.spotifyClientProvider = spotifyClientProvider;
+
+            semaphore = new SemaphoreSlim(1, 1);
+            credentialsRequest = clientCredentialsRequestProvider();
         }
 
         public async Task<string> TryGetLinkToTrackAsync(string artist, string track)
@@ -88,7 +88,7 @@ namespace Lastgram.Spotify
 
         private async Task RenewAccessTokenAsync()
         {
-            tokenResponse = await oauthClient.RequestToken(CredentialsRequest);
+            tokenResponse = await oauthClient.RequestToken(credentialsRequest);
 
             spotifyClient = spotifyClientProvider(ClientConfig.WithToken(tokenResponse.AccessToken));
         }
