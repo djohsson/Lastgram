@@ -7,6 +7,7 @@ namespace Lastgram.Models
     public class SpotifyTrack
     {
         [Key]
+        [MaxLength(32)]
         public string Md5 { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -16,6 +17,7 @@ namespace Lastgram.Models
         public string Track { get; set; }
 
         [Required]
+        [MaxLength(128)]
         public string Url { get; set; }
 
         public int ArtistId { get; set; }
