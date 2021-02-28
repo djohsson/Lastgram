@@ -1,5 +1,4 @@
 ﻿using IF.Lastfm.Core.Api;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,18 +6,16 @@ namespace Lastgram.Lastfm
 {
     public class LastfmService : ILastfmService
     {
-        private readonly LastfmClient lastfmClient;
+        private readonly IUserApi userApi;
 
-        public LastfmService()
+        public LastfmService(IUserApi userApi)
         {
-            lastfmClient = new LastfmClient(
-                Environment.GetEnvironmentVariable("LASTGRAM_LASTFM_APIKEY"),
-                Environment.GetEnvironmentVariable("LASTGRAM_LASTFM_APISECRET"));
+            this.userApi = userApi;
         }
 
         public async Task<LastfmTrackResponse> GetNowPlayingAsync(string username)
         {
-            var response = await lastfmClient.User.GetRecentScrobbles(username, count: 1);
+            var response = await userApi.GetRecentScrobbles(username, count: 1);
 
             return new LastfmTrackResponse(response.FirstOrDefault(), response.Success && response.Any());
         }

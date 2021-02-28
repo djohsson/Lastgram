@@ -27,7 +27,7 @@ namespace Lastgram.Commands
 
         public string CommandName => "np";
 
-        public string CommandDescription => "/np [username [temp]]";
+        public string CommandDescription => "[username [temp]]";
 
         public async Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {

@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using IF.Lastfm.Core.Api;
 using Lastgram.Commands;
 using Lastgram.Data;
 using Lastgram.Lastfm;
@@ -34,15 +35,43 @@ namespace Lastgram
         {
             var builder = new ContainerBuilder();
             RegisterDbContext(builder);
+            RegisterLastAuth(builder);
+            RegisterCommands(builder);
+            RegisterRepositories(builder);
+            RegisterServices(builder);
+
             builder.RegisterType<Bot>().As<IBot>();
+            builder.RegisterType<UserApi>().As<IUserApi>().SingleInstance();
+
+            Container = builder.Build();
+        }
+
+        private static void RegisterServices(ContainerBuilder builder)
+        {
+            builder.RegisterType<LastfmService>().As<ILastfmService>().SingleInstance();
+            builder.RegisterType<SpotifyService>().As<ISpotifyService>().SingleInstance();
+        }
+
+        private static void RegisterRepositories(ContainerBuilder builder)
+        {
             builder.RegisterType<UserRepository>().As<IUserRepository>().SingleInstance();
+            builder.RegisterType<SpotifyTrackRepository>().As<ISpotifyTrackRepository>().SingleInstance();
+        }
+
+        private static void RegisterCommands(ContainerBuilder builder)
+        {
             builder.RegisterType<CommandHandler>().As<ICommandHandler>();
             builder.RegisterType<ForgetMeCommand>().As<ICommand>().SingleInstance();
             builder.RegisterType<NowPlayingCommand>().As<ICommand>().SingleInstance();
-            builder.RegisterType<LastfmService>().As<ILastfmService>().SingleInstance();
-            builder.RegisterType<SpotifyService>().As<ISpotifyService>().SingleInstance();
-            builder.RegisterType<SpotifyTrackRepository>().As<ISpotifyTrackRepository>().SingleInstance();
-            Container = builder.Build();
+        }
+
+        private static void RegisterLastAuth(ContainerBuilder builder)
+        {
+            var auth = new LastAuth(
+                Environment.GetEnvironmentVariable("LASTGRAM_LASTFM_APIKEY"),
+                Environment.GetEnvironmentVariable("LASTGRAM_LASTFM_APISECRET"));
+
+            builder.RegisterInstance(auth).As<ILastAuth>();
         }
 
         private static void RegisterDbContext(ContainerBuilder builder)

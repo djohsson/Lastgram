@@ -27,11 +27,12 @@ namespace LastgramTest.Commands
         }
 
         [Test]
-        public void AddUserToRepositoryIfProvidingUsername()
+        public async Task AddUserToRepositoryIfProvidingUsername()
         {
             string lastFmUsername = "John";
+            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
 
-            nowPlayingService.ExecuteCommandAsync(
+            await nowPlayingService.ExecuteCommandAsync(
                 new Message() {
                     From = new User()
                     {
@@ -46,7 +47,7 @@ namespace LastgramTest.Commands
         }
 
         [Test]
-        public void GetUserFromRepositoryIfNoneIsProvided()
+        public async Task GetUserFromRepositoryIfNoneIsProvided()
         {
             string lastFmUsername = "John";
             string lastFmUsernameFromRepo = string.Empty;
@@ -54,7 +55,7 @@ namespace LastgramTest.Commands
             userRepositoryMock.Setup(m => m.TryGetUserAsync(It.IsAny<int>())).ReturnsAsync(lastFmUsername);
             lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
 
-            nowPlayingService.ExecuteCommandAsync(
+            await nowPlayingService.ExecuteCommandAsync(
                 new Message()
                 {
                     From = new User()
@@ -67,17 +68,18 @@ namespace LastgramTest.Commands
                 {
                     lastFmUsernameFromRepo = message;
                     return Task.CompletedTask;
-                }
-            );
+                });
 
             Assert.AreEqual("Could not find <i>John</i> on last.fm", lastFmUsernameFromRepo);
             userRepositoryMock.Verify(m => m.TryGetUserAsync(It.IsAny<int>()), Times.Once);
         }
 
         [Test]
-        public void DoNotAddUserToRepositoryIfTemporary()
+        public async Task DoNotAddUserToRepositoryIfTemporary()
         {
-            nowPlayingService.ExecuteCommandAsync(
+            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
+
+            await nowPlayingService.ExecuteCommandAsync(
                 new Message()
                 {
                     From = new User()
@@ -93,7 +95,7 @@ namespace LastgramTest.Commands
         }
 
         [Test]
-        public void AddTelegramUsernameIfNothingInRepository()
+        public async Task AddTelegramUsernameIfNothingInRepository()
         {
             string lastFmUsername = "John";
             string lastFmUsernameFromRepo = string.Empty;
@@ -102,7 +104,7 @@ namespace LastgramTest.Commands
             userRepositoryMock.Setup(m => m.TryGetUserAsync(It.IsAny<int>())).ReturnsAsync(string.Empty);
             lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
 
-            nowPlayingService.ExecuteCommandAsync(
+            await nowPlayingService.ExecuteCommandAsync(
                 new Message()
                 {
                     From = new User()

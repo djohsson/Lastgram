@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lastgram.Spotify
 {
-    class SpotifyService : ISpotifyService
+    public class SpotifyService : ISpotifyService
     {
         private static readonly ClientCredentialsRequest CredentialsRequest = new ClientCredentialsRequest(
             Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTID"),
@@ -49,10 +49,6 @@ namespace Lastgram.Spotify
                 url = await SearchForTrackOnSpotifyAsync(artist, track);
 
                 await spotifyTrackRepository.AddSpotifyTrackAsync(artist, track, url);
-            }
-            catch(APIUnauthorizedException e)
-            {
-                Console.WriteLine(e);
             }
             catch (APIException e)
             {

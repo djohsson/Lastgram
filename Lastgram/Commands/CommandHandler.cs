@@ -17,7 +17,7 @@ namespace Lastgram.Commands
 
         public async Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
-            if (!TryParseCommand(message, out var command))
+            if (!TryParseCommand(message, out ICommand command))
             {
                 return;
             }
