@@ -54,7 +54,7 @@ namespace Lastgram.Spotify
             {
                 url = await SearchForTrackOnSpotifyAsync(artistName, track);
 
-                await AddTrackToDatabase(artistName, track, url);
+                await StoreTrackAsync(artistName, track, url);
             }
             catch (APIException e)
             {
@@ -78,7 +78,7 @@ namespace Lastgram.Spotify
             return trackResponse.Tracks.Items.First().ExternalUrls["spotify"];
         }
 
-        private async Task AddTrackToDatabase(string artistName, string track, string url)
+        private async Task StoreTrackAsync(string artistName, string track, string url)
         {
             Artist artist = await artistService.GetOrAddArtistAsync(artistName);
 
