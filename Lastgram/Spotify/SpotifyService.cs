@@ -48,12 +48,7 @@ namespace Lastgram.Spotify
                 return url;
             }
 
-            // This does not fix all of the potential raceconditions in this file. But ehh, it will probably never happen :^)
-            await semaphore.WaitAsync();
-
             await RenewAccessTokenIfExpiredAsync();
-
-            semaphore.Release();
 
             try
             {
@@ -92,12 +87,22 @@ namespace Lastgram.Spotify
 
         private async Task RenewAccessTokenIfExpiredAsync()
         {
-            if (!AccessTokenIsExpired())
+            try
             {
-                return;
-            }
+                // This does not fix all of the potential raceconditions in this file. But ehh, it will probably never happen :^)
+                await semaphore.WaitAsync();
 
-            await RenewAccessTokenAsync();
+                if (!AccessTokenIsExpired())
+                {
+                    return;
+                }
+
+                await RenewAccessTokenAsync();
+            }
+            finally
+            {
+                semaphore.Release();
+            }
         }
 
         private bool AccessTokenIsExpired()
