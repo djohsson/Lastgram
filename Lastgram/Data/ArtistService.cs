@@ -17,9 +17,7 @@ namespace Lastgram.Data
         {
             Artist artist = await artistRepository.TryGetArtistAsync(artistName);
 
-            return artist == null
-                ? await artistRepository.AddArtistAsync(artistName)
-                : artist;
+            return artist ?? await artistRepository.AddArtistAsync(artistName);
         }
     }
 }
