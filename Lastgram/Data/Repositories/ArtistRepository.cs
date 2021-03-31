@@ -25,6 +25,7 @@ namespace Lastgram.Data.Repositories
             artist = new Artist() { Name = artistName };
 
             await context.Artists.AddAsync(artist);
+            await context.SaveChangesAsync();
 
             return artist;
         }

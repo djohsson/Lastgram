@@ -87,11 +87,11 @@ namespace Lastgram.Spotify
 
         private async Task RenewAccessTokenIfExpiredAsync()
         {
+            // This does not fix all of the potential raceconditions in this file. But ehh, it will probably never happen :^)
+            await semaphore.WaitAsync();
+
             try
             {
-                // This does not fix all of the potential raceconditions in this file. But ehh, it will probably never happen :^)
-                await semaphore.WaitAsync();
-
                 if (!AccessTokenIsExpired())
                 {
                     return;
