@@ -23,7 +23,7 @@ namespace Lastgram
 
             using (var scope = Container.BeginLifetimeScope())
             {
-                ApplyMigrations(scope);
+                await ApplyMigrationsAsync(scope);
 
                 var bot = scope.Resolve<IBot>();
 
@@ -109,10 +109,10 @@ namespace Lastgram
             builder.RegisterInstance(context).As<IMyDbContext>().SingleInstance();
         }
 
-        private static void ApplyMigrations(ILifetimeScope scope)
+        private static async Task ApplyMigrationsAsync(ILifetimeScope scope)
         {
             var dbContext = scope.Resolve<IMyDbContext>();
-            dbContext.Database.Migrate();
+            await dbContext.Database.MigrateAsync();
         }
     }
 }
