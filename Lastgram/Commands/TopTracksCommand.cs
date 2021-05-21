@@ -56,7 +56,7 @@ namespace Lastgram.Commands
 
         private async Task<string> GetResponseAsync(string lastfmUsername, LastfmTopTracksResponse topTracksResponse)
         {
-            string response = $"<i>{lastfmUsername}'s</i> top tracks for the week:\n";
+            string response = $"<i>{lastfmUsername}'s</i> top tracks for the week:\n\n";
 
             foreach (var topTrack in topTracksResponse.TopTracks)
             {
