@@ -78,7 +78,7 @@ namespace LastgramTest.Commands
                     return Task.CompletedTask;
                 });
 
-            Assert.AreEqual("Could not find <i>John</i> on last.fm", lastFmUsernameFromRepo);
+            Assert.AreEqual("Could not find <i>John</i> on last.fm 😢", lastFmUsernameFromRepo);
             userRepositoryMock.Verify(m => m.TryGetUserAsync(It.IsAny<int>()), Times.Once);
         }
 
@@ -129,7 +129,7 @@ namespace LastgramTest.Commands
                 }
             );
 
-            Assert.AreEqual("Could not find <i>John</i> on last.fm", telegramUsername);
+            Assert.AreEqual("Could not find <i>John</i> on last.fm 😢", telegramUsername);
             userRepositoryMock.Verify(m => m.AddOrUpdateUserAsync(It.IsAny<int>(), lastFmUsername), Times.Once);
         }
     }
