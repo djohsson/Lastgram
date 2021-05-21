@@ -8,22 +8,22 @@ using Telegram.Bot.Types;
 namespace LastgramTest.Commands
 {
     [TestFixture]
-    class ForgetMeServiceTest
+    class ForgetMeCommandTest
     {
-        private IForgetMeCommand forgetMeService;
+        private ForgetMeCommand forgetMeCommand;
         private Mock<IUserRepository> userRepositoryMock;
 
         [SetUp]
         public void Setup()
         {
             userRepositoryMock = new Mock<IUserRepository>();
-            forgetMeService = new ForgetMeCommand(userRepositoryMock.Object);
+            forgetMeCommand = new ForgetMeCommand(userRepositoryMock.Object);
         }
 
         [Test]
-        public void ShouldRemoveFromRepository()
+        public async Task ShouldRemoveFromRepository()
         {
-            forgetMeService.ExecuteCommandAsync(
+            await forgetMeCommand.ExecuteCommandAsync(
                 new Message()
                 {
                     From = new User()

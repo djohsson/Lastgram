@@ -2,18 +2,14 @@
 using Lastgram.Lastfm;
 using Lastgram.Response;
 using Lastgram.Spotify;
-using Lastgram.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using Telegram.Bot.Types;
 
 namespace Lastgram.Commands
 {
-    public class NowPlayingCommand : INowPlayingCommand
+    public class NowPlayingCommand : ICommand
     {
         private readonly IUserRepository userRepository;
         private readonly ILastfmService lastfmService;
@@ -34,46 +30,23 @@ namespace Lastgram.Commands
 
         public string CommandName => "np";
 
-        public string CommandDescription => "[username [temp]]";
+        public string CommandDescription => "Get the currently playing song for set last.fm user";
 
         public async Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
-            string lastfmUsername;
-            List<string> parameters = message.GetParameters();
+            string lastfmUsername = await userRepository.TryGetUserAsync(message.From.Id);
 
-            if (!parameters.Any())
+            if (string.IsNullOrEmpty(lastfmUsername))
             {
-                // User did not provide Last.fm username. Try fetching one from the repository
-                lastfmUsername = await userRepository.TryGetUserAsync(message.From.Id);
-
-                if (string.IsNullOrEmpty(lastfmUsername))
-                {
-                    lastfmUsername = string.IsNullOrEmpty(message.From.Username)
-                        ? message.From.FirstName
-                        : message.From.Username;
-
-                    await userRepository.AddOrUpdateUserAsync(message.From.Id, lastfmUsername);
-                }
-            }
-            else if (parameters.Count == 1)
-            {
-                // User has provided a Last.fm username
-                lastfmUsername = parameters.First();
+                lastfmUsername = string.IsNullOrEmpty(message.From.Username)
+                    ? message.From.FirstName
+                    : message.From.Username;
 
                 await userRepository.AddOrUpdateUserAsync(message.From.Id, lastfmUsername);
             }
-            else if (parameters.Count == 2 && parameters.Last().ToLowerInvariant().Equals("temp"))
-            {
-                // User has provided a temporary Last.fm username
-                lastfmUsername = parameters.First();
-            }
-            else
-            {
-                // Invalid input
-                return;
-            }
 
             var track = await lastfmService.GetNowPlayingAsync(lastfmUsername);
+
             string response;
 
             if (track.IsSuccess)

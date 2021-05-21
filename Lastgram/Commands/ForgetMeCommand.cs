@@ -5,7 +5,7 @@ using Telegram.Bot.Types;
 
 namespace Lastgram.Commands
 {
-    public class ForgetMeCommand : IForgetMeCommand
+    public class ForgetMeCommand : ICommand
     {
         private readonly IUserRepository userRepository;
 

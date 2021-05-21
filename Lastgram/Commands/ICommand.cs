@@ -10,6 +10,6 @@ namespace Lastgram.Commands
 
         string CommandDescription { get; }
 
-        Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc);
+        Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFuncAsync);
     }
 }
