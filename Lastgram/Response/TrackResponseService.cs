@@ -1,24 +1,15 @@
 ﻿using IF.Lastfm.Core.Objects;
-using Lastgram.Spotify;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace Lastgram.Response
 {
     public class TrackResponseService : ITrackResponseService
     {
-        private readonly ISpotifyService spotifyService;
-
-        public TrackResponseService(ISpotifyService spotifyService)
+        public string GetResponseForTrack(LastTrack track, string url)
         {
-            this.spotifyService = spotifyService;
-        }
-
-        public string GetResponseForTrack(LastTrack topTrack, string url)
-        {
-            var artistAndTrack = HttpUtility.HtmlEncode($"{topTrack.ArtistName} - {topTrack.Name}");
-            string encodedLastfmUrl = Regex.Replace(topTrack.Url.AbsoluteUri, "([\"])", @"\$1");
+            var artistAndTrack = HttpUtility.HtmlEncode($"{track.ArtistName} - {track.Name}");
+            string encodedLastfmUrl = Regex.Replace(track.Url.AbsoluteUri, "([\"])", @"\$1");
 
             string response = $"🎵 <b>{artistAndTrack}</b>\n";
 
