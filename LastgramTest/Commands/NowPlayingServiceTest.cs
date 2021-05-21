@@ -30,7 +30,7 @@ namespace LastgramTest.Commands
         public async Task AddUserToRepositoryIfProvidingUsername()
         {
             string lastFmUsername = "John";
-            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
+            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse { Track = null, IsSuccess = false });
 
             await nowPlayingService.ExecuteCommandAsync(
                 new Message() {
@@ -53,7 +53,7 @@ namespace LastgramTest.Commands
             string lastFmUsernameFromRepo = string.Empty;
 
             userRepositoryMock.Setup(m => m.TryGetUserAsync(It.IsAny<int>())).ReturnsAsync(lastFmUsername);
-            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
+            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse { Track = null, IsSuccess = false });
 
             await nowPlayingService.ExecuteCommandAsync(
                 new Message()
@@ -77,7 +77,7 @@ namespace LastgramTest.Commands
         [Test]
         public async Task DoNotAddUserToRepositoryIfTemporary()
         {
-            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
+            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse { Track = null, IsSuccess = false });
 
             await nowPlayingService.ExecuteCommandAsync(
                 new Message()
@@ -102,7 +102,7 @@ namespace LastgramTest.Commands
             string telegramUsername = string.Empty;
 
             userRepositoryMock.Setup(m => m.TryGetUserAsync(It.IsAny<int>())).ReturnsAsync(string.Empty);
-            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse(null, false));
+            lastfmServiceMock.Setup(m => m.GetNowPlayingAsync(It.IsAny<string>())).ReturnsAsync(new LastfmTrackResponse { Track = null, IsSuccess = false });
 
             await nowPlayingService.ExecuteCommandAsync(
                 new Message()

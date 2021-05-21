@@ -69,7 +69,7 @@ namespace Lastgram.Commands
             var track = await lastfmService.GetNowPlayingAsync(lastfmUsername);
             string response;
 
-            if (track.Success)
+            if (track.IsSuccess)
             {
                 var url = await spotifyService.TryGetLinkToTrackAsync(track.Track.ArtistName, track.Track.Name);
 

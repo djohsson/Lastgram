@@ -87,6 +87,7 @@ namespace Lastgram
             builder.RegisterType<CommandHandler>().As<ICommandHandler>();
             builder.RegisterType<ForgetMeCommand>().As<ICommand>().SingleInstance();
             builder.RegisterType<NowPlayingCommand>().As<ICommand>().SingleInstance();
+            builder.RegisterType<TopTracksCommand>().As<ICommand>().SingleInstance();
         }
 
         private static void RegisterLastAuth(ContainerBuilder builder)

@@ -4,14 +4,8 @@ namespace Lastgram.Lastfm
 {
     public class LastfmTrackResponse
     {
-        public LastfmTrackResponse(LastTrack track, bool success)
-        {
-            Track = track;
-            Success = success;
-        }
+        public LastTrack Track { get; init; }
 
-        public LastTrack Track { get; }
-
-        public bool Success { get; }
+        public bool IsSuccess { get; init; }
     }
 }
