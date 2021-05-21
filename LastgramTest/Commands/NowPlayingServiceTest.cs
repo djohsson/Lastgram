@@ -1,6 +1,7 @@
 ﻿using Lastgram.Commands;
 using Lastgram.Data.Repositories;
 using Lastgram.Lastfm;
+using Lastgram.Response;
 using Lastgram.Spotify;
 using Moq;
 using NUnit.Framework;
@@ -16,6 +17,7 @@ namespace LastgramTest.Commands
         private Mock<IUserRepository> userRepositoryMock;
         private Mock<ILastfmService> lastfmServiceMock;
         private Mock<ISpotifyService> spotifyServiceMock;
+        private Mock<ITrackResponseService> trackResponseServiceMock;
 
         [SetUp]
         public void Setup()
@@ -23,7 +25,13 @@ namespace LastgramTest.Commands
             userRepositoryMock = new Mock<IUserRepository>();
             lastfmServiceMock = new Mock<ILastfmService>();
             spotifyServiceMock = new Mock<ISpotifyService>();
-            nowPlayingService = new NowPlayingCommand(userRepositoryMock.Object, lastfmServiceMock.Object, spotifyServiceMock.Object);
+            trackResponseServiceMock = new Mock<ITrackResponseService>();
+
+            nowPlayingService = new NowPlayingCommand(
+                userRepositoryMock.Object,
+                lastfmServiceMock.Object,
+                spotifyServiceMock.Object,
+                trackResponseServiceMock.Object);
         }
 
         [Test]

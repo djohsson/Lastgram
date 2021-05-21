@@ -4,6 +4,7 @@ using Lastgram.Commands;
 using Lastgram.Data;
 using Lastgram.Data.Repositories;
 using Lastgram.Lastfm;
+using Lastgram.Response;
 using Lastgram.Spotify;
 using Microsoft.EntityFrameworkCore;
 using SpotifyAPI.Web;
@@ -52,6 +53,7 @@ namespace Lastgram
         {
             builder.RegisterType<LastfmService>().As<ILastfmService>().SingleInstance();
             builder.RegisterType<ArtistService>().As<IArtistService>().SingleInstance();
+            builder.RegisterType<TrackResponseService>().As<ITrackResponseService>().SingleInstance();
 
             RegisterSpotifyService(builder);
         }

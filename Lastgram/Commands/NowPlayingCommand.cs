@@ -1,5 +1,6 @@
 ﻿using Lastgram.Data.Repositories;
 using Lastgram.Lastfm;
+using Lastgram.Response;
 using Lastgram.Spotify;
 using Lastgram.Utils;
 using System;
@@ -17,12 +18,18 @@ namespace Lastgram.Commands
         private readonly IUserRepository userRepository;
         private readonly ILastfmService lastfmService;
         private readonly ISpotifyService spotifyService;
+        private readonly ITrackResponseService trackResponseService;
 
-        public NowPlayingCommand(IUserRepository userRepository, ILastfmService lastfmService, ISpotifyService spotifyService)
+        public NowPlayingCommand(
+            IUserRepository userRepository,
+            ILastfmService lastfmService,
+            ISpotifyService spotifyService,
+            ITrackResponseService trackResponseService)
         {
             this.userRepository = userRepository;
             this.lastfmService = lastfmService;
             this.spotifyService = spotifyService;
+            this.trackResponseService = trackResponseService;
         }
 
         public string CommandName => "np";
@@ -79,20 +86,16 @@ namespace Lastgram.Commands
             {
                 lastfmUsername = HttpUtility.HtmlEncode(lastfmUsername);
 
-                response = $"Could not find <i>{lastfmUsername}</i> on last.fm";
+                response = $"Could not find <i>{lastfmUsername}</i> on last.fm 😢";
             }
 
             await responseFunc(message.Chat, response);
         }
 
-        private static string GetResponseMessage(string lastfmUsername, LastfmTrackResponse track, string url)
+        private string GetResponseMessage(string lastfmUsername, LastfmTrackResponse track, string url)
         {
             string response;
-            string encodedArtistAndName = HttpUtility.HtmlEncode($"{track.Track.ArtistName} - {track.Track.Name}");
             string encodedUsername = HttpUtility.HtmlEncode(lastfmUsername);
-
-            // Lastfm URL can contain '"' and break Telegram's HTML parser
-            string encodedLastfmUrl = Regex.Replace(track.Track.Url.AbsoluteUri, "([\"])", @"\$1");
 
             if (track.Track.IsNowPlaying ?? false)
             {
@@ -103,14 +106,7 @@ namespace Lastgram.Commands
                 response = $"<i>{encodedUsername} played</i>\n";
             }
 
-            response += $"<b>{encodedArtistAndName}</b>\n";
-
-            if (!string.IsNullOrEmpty(url))
-            {
-                response += $"<a href =\"{url}\">Spotify</a> | ";
-            }
-
-            response += $"<a href =\"{encodedLastfmUrl}\">Lastfm</a>\n";
+            response += trackResponseService.GetResponseForTrack(track.Track, url);
 
             if (!track.Track.IsNowPlaying ?? true)
             {

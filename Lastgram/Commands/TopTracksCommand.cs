@@ -1,13 +1,9 @@
-﻿using IF.Lastfm.Core.Objects;
-using Lastgram.Data.Repositories;
+﻿using Lastgram.Data.Repositories;
 using Lastgram.Lastfm;
+using Lastgram.Response;
 using Lastgram.Spotify;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using Telegram.Bot.Types;
 
 namespace Lastgram.Commands
@@ -17,12 +13,18 @@ namespace Lastgram.Commands
         private readonly ILastfmService lastfmService;
         private readonly IUserRepository userRepository;
         private readonly ISpotifyService spotifyService;
+        private readonly ITrackResponseService trackResponseService;
 
-        public TopTracksCommand(ILastfmService lastfmService, IUserRepository userRepository, ISpotifyService spotifyService)
+        public TopTracksCommand(
+            ILastfmService lastfmService,
+            IUserRepository userRepository,
+            ISpotifyService spotifyService,
+            ITrackResponseService trackResponseService)
         {
             this.lastfmService = lastfmService;
             this.userRepository = userRepository;
             this.spotifyService = spotifyService;
+            this.trackResponseService = trackResponseService;
         }
 
         public string CommandName => "toptracks";
@@ -35,7 +37,7 @@ namespace Lastgram.Commands
 
             if (string.IsNullOrEmpty(lastfmUsername))
             {
-                await responseFunc(message.Chat, "No username set");
+                await responseFunc(message.Chat, "No username set 😢");
                 return;
             }
 
@@ -47,32 +49,23 @@ namespace Lastgram.Commands
                 return;
             }
 
-            string response = await GetResponse(lastfmUsername, topTracksResponse);
+            string response = await GetResponseAsync(lastfmUsername, topTracksResponse);
 
             await responseFunc(message.Chat, response);
         }
 
-        private async Task<string> GetResponse(string lastfmUsername, LastfmTopTracksResponse response)
+        private async Task<string> GetResponseAsync(string lastfmUsername, LastfmTopTracksResponse topTracksResponse)
         {
-            string output = $"<i>{lastfmUsername}'s</i> top tracks for the week:\n";
+            string response = $"<i>{lastfmUsername}'s</i> top tracks for the week:\n";
 
-            foreach (var topTrack in response.TopTracks)
+            foreach (var topTrack in topTracksResponse.TopTracks)
             {
                 var url = await spotifyService.TryGetLinkToTrackAsync(topTrack.ArtistName, topTrack.Name);
-                var artistAndTrack = HttpUtility.HtmlEncode($"{topTrack.ArtistName} - {topTrack.Name}");
-                string encodedLastfmUrl = Regex.Replace(topTrack.Url.AbsoluteUri, "([\"])", @"\$1");
 
-                output += $"<b>{artistAndTrack}</b>\n";
-
-                if (!string.IsNullOrEmpty(url))
-                {
-                    output += $"<a href =\"{url}\">Spotify</a> | ";
-                }
-
-                output += $"<a href =\"{encodedLastfmUrl}\">Lastfm</a>\n\n";
+                response += trackResponseService.GetResponseForTrack(topTrack, url);
             }
 
-            return output;
+            return response;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Lastgram.Commands
         {
             await userRepository.RemoveUserAsync(message.From.Id);
 
-            await responseFunc(message.Chat, "You have been removed!");
+            await responseFunc(message.Chat, "You have been removed! 👊😎");
         }
     }
 }
