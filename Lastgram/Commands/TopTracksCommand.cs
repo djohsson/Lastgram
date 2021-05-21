@@ -56,13 +56,14 @@ namespace Lastgram.Commands
 
         private async Task<string> GetResponseAsync(string lastfmUsername, LastfmTopTracksResponse topTracksResponse)
         {
-            string response = $"<i>{lastfmUsername}'s</i> top tracks for the week:\n\n";
+            string response = $"<i>{lastfmUsername}'s</i> top tracks for the week:\n";
 
             foreach (var topTrack in topTracksResponse.TopTracks)
             {
                 var url = await spotifyService.TryGetLinkToTrackAsync(topTrack.ArtistName, topTrack.Name);
 
                 response += trackResponseService.GetResponseForTrack(topTrack, url);
+                response += "\n\n";
             }
 
             return response;

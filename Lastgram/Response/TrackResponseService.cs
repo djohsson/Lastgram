@@ -20,7 +20,7 @@ namespace Lastgram.Response
                 response += $"<a href =\"{url}\">Spotify</a> | ";
             }
 
-            response += $"<a href =\"{encodedLastfmUrl}\">Lastfm</a>\n\n";
+            response += $"<a href =\"{encodedLastfmUrl}\">Lastfm</a>";
             return response;
         }
     }

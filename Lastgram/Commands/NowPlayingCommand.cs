@@ -99,14 +99,15 @@ namespace Lastgram.Commands
 
             if (track.Track.IsNowPlaying ?? false)
             {
-                response = $"<i>{encodedUsername} is currently playing</i>\n\n";
+                response = $"<i>{encodedUsername} is currently playing</i>\n";
             }
             else
             {
-                response = $"<i>{encodedUsername} played</i>\n\n";
+                response = $"<i>{encodedUsername} played</i>\n";
             }
 
             response += trackResponseService.GetResponseForTrack(track.Track, url);
+            response += "\n";
 
             if (!track.Track.IsNowPlaying ?? true)
             {
