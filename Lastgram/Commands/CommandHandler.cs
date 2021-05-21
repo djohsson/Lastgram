@@ -22,7 +22,14 @@ namespace Lastgram.Commands
                 return;
             }
 
-            await command.ExecuteCommandAsync(message, responseFunc);
+            try
+            {
+                await command.ExecuteCommandAsync(message, responseFunc);
+            }
+            catch (CommandException e)
+            {
+                await responseFunc(message.Chat, e.Message);
+            }
         }
 
         public IReadOnlyList<BotCommand> GetBotCommands()

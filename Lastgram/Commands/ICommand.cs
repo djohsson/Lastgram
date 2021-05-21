@@ -6,9 +6,9 @@ namespace Lastgram.Commands
 {
     public interface ICommand
     {
-        string CommandName { get; }
+        string CommandName { get => "/command"; }
 
-        string CommandDescription { get; }
+        string CommandDescription { get => "description"; }
 
         Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFuncAsync);
     }

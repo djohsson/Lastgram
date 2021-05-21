@@ -1,9 +1,9 @@
 ﻿using Lastgram.Commands;
 using Lastgram.Data.Repositories;
+using LastgramTest.Helpers;
 using Moq;
 using NUnit.Framework;
 using System.Threading.Tasks;
-using Telegram.Bot.Types;
 
 namespace LastgramTest.Commands
 {
@@ -25,19 +25,21 @@ namespace LastgramTest.Commands
         [TestCase("John", true)]
         [TestCase("", false)]
         [TestCase(null, false)]
-        public async Task AddUserToRepositoryIfCorrect(string lastfmUsername, bool shouldGetAdded)
+        public async Task AddUserToRepositoryIfValid(string lastfmUsername, bool shouldGetAdded)
         {
-            await setLastfmUsernameCommand.ExecuteCommandAsync(
-                new Message()
+            try
+            {
+                await setLastfmUsernameCommand.ExecuteCommandAsync(
+                MessageHelper.CreateMessage(id: 1, text: $"/setusername {lastfmUsername}"),
+                (chat, message) => Task.CompletedTask);
+            }
+            catch (CommandException)
+            {
+                if (shouldGetAdded)
                 {
-                    From = new User()
-                    {
-                        Id = 1
-                    },
-                    Text = $"/setLastfmUsername {lastfmUsername}"
-                },
-                (chat, message) => Task.CompletedTask
-            );
+                    Assert.Fail("Should not throw");
+                }
+            }
 
             if (shouldGetAdded)
             {
@@ -55,6 +57,27 @@ namespace LastgramTest.Commands
             }
         }
 
+        [TestCase("John", true)]
+        [TestCase("", false)]
+        [TestCase(null, false)]
+        public void ThrowIfInvalidUsername(string lastfmUsername, bool shouldGetAdded)
+        {
+            if (!shouldGetAdded)
+            {
+                Assert.ThrowsAsync<CommandException>(
+                    async () => await setLastfmUsernameCommand.ExecuteCommandAsync(
+                            MessageHelper.CreateMessage(text: $"/setusername {lastfmUsername}"),
+                            (chat, message) => Task.CompletedTask));
+            }
+            else
+            {
+                Assert.DoesNotThrowAsync(
+                    async () => await setLastfmUsernameCommand.ExecuteCommandAsync(
+                            MessageHelper.CreateMessage(text: $"/setusername {lastfmUsername}"),
+                            (chat, message) => Task.CompletedTask));
+            }
+        }
+
         [Test]
         public async Task DoNotAddTooLongUsername()
         {
@@ -63,22 +86,23 @@ namespace LastgramTest.Commands
                 "Donecnecsemperjusto.Sedefficiturmattismollis.Proinrutrumpurusaduiiaculisposuere.Nullamnisitellus,tempus" +
                 "tristiquescelerisquelobortis,consequatnecorci.Maecenasegetsemperdolor,euultricieselit.Fuscequisdiamtellus.";
 
-            await setLastfmUsernameCommand.ExecuteCommandAsync(
-                new Message()
-                {
-                    From = new User()
-                    {
-                        Id = 1
-                    },
-                    Text = $"/setLastfmUsername {lastfmUsername}"
-                },
-                (chat, message) => Task.CompletedTask
-            );
-
-            userRepositoryMock.Verify(
+            try
+            {
+                await setLastfmUsernameCommand.ExecuteCommandAsync(
+                    MessageHelper.CreateMessage(text: $"/setusername {lastfmUsername}"),
+                    (chat, message) => Task.CompletedTask);
+            }
+            catch (CommandException)
+            {
+                userRepositoryMock.Verify(
                    mocks => mocks.AddOrUpdateUserAsync(It.IsAny<int>(),
                    It.IsAny<string>()),
                    Times.Never);
+
+                return;
+            }
+
+            Assert.Fail("Should throw");
         }
     }
 }

@@ -3,6 +3,7 @@ using Lastgram.Utils;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Telegram.Bot.Types;
 
 namespace Lastgram.Commands
@@ -28,19 +29,19 @@ namespace Lastgram.Commands
 
             if (string.IsNullOrEmpty(username))
             {
-                await responseFunc(message.Chat, "Please specify a last.fm username 🕵️‍♀️");
-                return;
+                throw new CommandException("Please specify a last.fm username 🕵️‍♀️");
             }
 
             if (username.Length > MAX_USERNAME_LENGTH)
             {
-                await responseFunc(message.Chat, "Too long username 📏");
-                return;
+                throw new CommandException("Too long username 📏");
             }
 
             await userRepository.AddOrUpdateUserAsync(message.From.Id, username);
 
-            await responseFunc(message.Chat, $"Registered <i>{username}</i> 🥳");
+            string escapedUsername = HttpUtility.HtmlEncode(username);
+
+            await responseFunc(message.Chat, $"Registered <i>{escapedUsername}</i> 🥳");
         }
     }
 }

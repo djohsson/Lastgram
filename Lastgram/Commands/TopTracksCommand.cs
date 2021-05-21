@@ -4,6 +4,7 @@ using Lastgram.Response;
 using Lastgram.Spotify;
 using System;
 using System.Threading.Tasks;
+using System.Web;
 using Telegram.Bot.Types;
 
 namespace Lastgram.Commands
@@ -34,19 +35,18 @@ namespace Lastgram.Commands
         public async Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
             var lastfmUsername = await userRepository.TryGetUserAsync(message.From.Id);
+            lastfmUsername = HttpUtility.HtmlEncode(lastfmUsername);
 
             if (string.IsNullOrEmpty(lastfmUsername))
             {
-                await responseFunc(message.Chat, "No username set 😢");
-                return;
+                throw new CommandException("No username set 😢");
             }
 
             LastfmTopTracksResponse topTracksResponse = await lastfmService.GetTopTracksAsync(lastfmUsername);
 
             if (!topTracksResponse.IsSuccess)
             {
-                await responseFunc(message.Chat, $"Could not retrieve top tracks for <i>{lastfmUsername}</i>");
-                return;
+                throw new CommandException($"Could not retrieve top tracks for <i>{lastfmUsername}</i>");
             }
 
             string response = await GetResponseAsync(lastfmUsername, topTracksResponse);

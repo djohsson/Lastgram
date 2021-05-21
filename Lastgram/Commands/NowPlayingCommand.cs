@@ -59,7 +59,7 @@ namespace Lastgram.Commands
             {
                 lastfmUsername = HttpUtility.HtmlEncode(lastfmUsername);
 
-                response = $"Could not find <i>{lastfmUsername}</i> on last.fm 😢";
+                throw new CommandException($"Could not find <i>{lastfmUsername}</i> on last.fm 😢");
             }
 
             await responseFunc(message.Chat, response);
