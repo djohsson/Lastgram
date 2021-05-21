@@ -27,7 +27,7 @@ namespace Lastgram.Commands
 
         public string CommandName => "toptracks";
 
-        public string CommandDescription => "Retrieve the top tracks";
+        public string CommandDescription => "Retrieve top tracks for the week";
 
         public async Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
