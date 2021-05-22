@@ -10,17 +10,17 @@ Available commands:
 
 ## Setup
 
-Running the bot with Docker requires the following environment variables to be set:
-- LASTGRAM_DOCKER_CONNECTIONSTRING
-- LASTGRAM_LASTFM_APIKEY
-- LASTGRAM_LASTFM_APISECRET
-- LASTGRAM_SPOTIFY_CLIENTID
-- LASTGRAM_SPOTIFY_CLIENTSECRET
-- LASTGRAM_TELEGRAM_KEY
-- LASTGRAM_DB_PASSWORD (if using the docker-compose.yml in this repo)
+Running the bot with docker compose requires the following environment variables to be set:
+- `LASTGRAM_DOCKER_CONNECTIONSTRING`
+- `LASTGRAM_LASTFM_APIKEY`
+- `LASTGRAM_LASTFM_APISECRET`
+- `LASTGRAM_SPOTIFY_CLIENTID`
+- `LASTGRAM_SPOTIFY_CLIENTSECRET`
+- `LASTGRAM_TELEGRAM_KEY`
+- `LASTGRAM_DB_PASSWORD` (if using the docker-compose.yml in this repo)
 
-Running the bot outside of docker:
-- Swap the connection string environment variable for LASTGRAM_CONNECTIONSTRING
+Running the bot outside of docker compose:
+- Swap the connection string environment variable for `LASTGRAM_CONNECTIONSTRING`
 
 
 ## Dependencies
