@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Lastgram.Models
+namespace Lastgram.Data.Models
 {
     public class User
     {

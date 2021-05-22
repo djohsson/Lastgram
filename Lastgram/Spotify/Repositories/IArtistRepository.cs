@@ -1,7 +1,7 @@
-﻿using Lastgram.Models;
+﻿using Lastgram.Data.Models;
 using System.Threading.Tasks;
 
-namespace Lastgram.Data.Repositories
+namespace Lastgram.Spotify.Repositories
 {
     public interface IArtistRepository
     {

@@ -1,4 +1,4 @@
-﻿using Lastgram.Data.Repositories;
+﻿using Lastgram.Lastfm;
 using Lastgram.Utils;
 using System;
 using System.Linq;
@@ -12,11 +12,11 @@ namespace Lastgram.Commands
     {
         private const int MAX_USERNAME_LENGTH = 255;
 
-        private readonly IUserRepository userRepository;
+        private readonly ILastfmUsernameService lastfmUsernameService;
 
-        public SetLastfmUsernameCommand(IUserRepository userRepository)
+        public SetLastfmUsernameCommand(ILastfmUsernameService lastfmUsenamerService)
         {
-            this.userRepository = userRepository;
+            this.lastfmUsernameService = lastfmUsenamerService;
         }
 
         public string CommandName => "setusername";
@@ -37,7 +37,7 @@ namespace Lastgram.Commands
                 throw new CommandException("Too long username 📏");
             }
 
-            await userRepository.AddOrUpdateUserAsync(message.From.Id, username);
+            await lastfmUsernameService.AddOrUpdateUsernameAsync(message.From.Id, username);
 
             string escapedUsername = HttpUtility.HtmlEncode(username);
 

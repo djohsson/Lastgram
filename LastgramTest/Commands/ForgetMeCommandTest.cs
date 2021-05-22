@@ -1,5 +1,5 @@
 ﻿using Lastgram.Commands;
-using Lastgram.Data.Repositories;
+using Lastgram.Lastfm;
 using LastgramTest.Helpers;
 using Moq;
 using NUnit.Framework;
@@ -11,13 +11,13 @@ namespace LastgramTest.Commands
     class ForgetMeCommandTest
     {
         private ForgetMeCommand forgetMeCommand;
-        private Mock<IUserRepository> userRepositoryMock;
+        private Mock<ILastfmUsernameService> lastfmUsernameServiceMock;
 
         [SetUp]
         public void Setup()
         {
-            userRepositoryMock = new Mock<IUserRepository>();
-            forgetMeCommand = new ForgetMeCommand(userRepositoryMock.Object);
+            lastfmUsernameServiceMock = new();
+            forgetMeCommand = new(lastfmUsernameServiceMock.Object);
         }
 
         [Test]
@@ -28,7 +28,7 @@ namespace LastgramTest.Commands
                 (chat, message) => Task.CompletedTask
             );
 
-            userRepositoryMock.Verify(m => m.RemoveUserAsync(It.Is<int>(id => id == 1)), Times.Once);
+            lastfmUsernameServiceMock.Verify(m => m.RemoveUsernameAsync(It.Is<int>(id => id == 1)), Times.Once);
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using Lastgram.Data.Repositories;
-using Lastgram.Lastfm;
-using Lastgram.Response;
+﻿using Lastgram.Lastfm;
 using Lastgram.Spotify;
+using Lastgram.Utils;
 using System;
 using System.Threading.Tasks;
 using System.Web;
@@ -11,21 +10,18 @@ namespace Lastgram.Commands
 {
     public class NowPlayingCommand : ICommand
     {
-        private readonly IUserRepository userRepository;
         private readonly ILastfmService lastfmService;
+        private readonly ILastfmUsernameService lastfmUsernameService;
         private readonly ISpotifyService spotifyService;
-        private readonly ITrackResponseService trackResponseService;
 
         public NowPlayingCommand(
-            IUserRepository userRepository,
             ILastfmService lastfmService,
             ISpotifyService spotifyService,
-            ITrackResponseService trackResponseService)
+            ILastfmUsernameService lastfmUsernameService)
         {
-            this.userRepository = userRepository;
             this.lastfmService = lastfmService;
             this.spotifyService = spotifyService;
-            this.trackResponseService = trackResponseService;
+            this.lastfmUsernameService = lastfmUsernameService;
         }
 
         public string CommandName => "np";
@@ -34,7 +30,7 @@ namespace Lastgram.Commands
 
         public async Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
-            string lastfmUsername = await userRepository.TryGetUserAsync(message.From.Id);
+            string lastfmUsername = await lastfmUsernameService.TryGetUsernameAsync(message.From.Id);
 
             if (string.IsNullOrEmpty(lastfmUsername))
             {
@@ -42,7 +38,7 @@ namespace Lastgram.Commands
                     ? message.From.FirstName
                     : message.From.Username;
 
-                await userRepository.AddOrUpdateUserAsync(message.From.Id, lastfmUsername);
+                await lastfmUsernameService.AddOrUpdateUsernameAsync(message.From.Id, lastfmUsername);
             }
 
             var track = await lastfmService.GetNowPlayingAsync(lastfmUsername);
@@ -79,7 +75,7 @@ namespace Lastgram.Commands
                 response = $"<i>{encodedUsername} played</i>\n";
             }
 
-            response += trackResponseService.GetResponseForTrack(track.Track, url);
+            response += ResponseHelper.GetResponseForTrack(track.Track, url);
             response += "\n";
 
             if (!track.Track.IsNowPlaying ?? true)

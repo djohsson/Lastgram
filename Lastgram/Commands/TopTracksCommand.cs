@@ -1,7 +1,6 @@
-﻿using Lastgram.Data.Repositories;
-using Lastgram.Lastfm;
-using Lastgram.Response;
+﻿using Lastgram.Lastfm;
 using Lastgram.Spotify;
+using Lastgram.Utils;
 using System;
 using System.Threading.Tasks;
 using System.Web;
@@ -12,20 +11,17 @@ namespace Lastgram.Commands
     public class TopTracksCommand : ICommand
     {
         private readonly ILastfmService lastfmService;
-        private readonly IUserRepository userRepository;
+        private readonly ILastfmUsernameService lastfmUsernameService;
         private readonly ISpotifyService spotifyService;
-        private readonly ITrackResponseService trackResponseService;
 
         public TopTracksCommand(
             ILastfmService lastfmService,
-            IUserRepository userRepository,
-            ISpotifyService spotifyService,
-            ITrackResponseService trackResponseService)
+            ILastfmUsernameService lastfmUsernameService,
+            ISpotifyService spotifyService)
         {
             this.lastfmService = lastfmService;
-            this.userRepository = userRepository;
+            this.lastfmUsernameService = lastfmUsernameService;
             this.spotifyService = spotifyService;
-            this.trackResponseService = trackResponseService;
         }
 
         public string CommandName => "toptracks";
@@ -34,7 +30,7 @@ namespace Lastgram.Commands
 
         public async Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
-            var lastfmUsername = await userRepository.TryGetUserAsync(message.From.Id);
+            var lastfmUsername = await lastfmUsernameService.TryGetUsernameAsync(message.From.Id);
             lastfmUsername = HttpUtility.HtmlEncode(lastfmUsername);
 
             if (string.IsNullOrEmpty(lastfmUsername))
@@ -62,7 +58,7 @@ namespace Lastgram.Commands
             {
                 var url = await spotifyService.TryGetLinkToTrackAsync(topTrack.ArtistName, topTrack.Name);
 
-                response += trackResponseService.GetResponseForTrack(topTrack, url);
+                response += ResponseHelper.GetResponseForTrack(topTrack, url);
                 response += "\n\n";
             }
 

@@ -1,5 +1,6 @@
 ﻿using Lastgram.Commands;
-using Lastgram.Data.Repositories;
+using Lastgram.Lastfm;
+using Lastgram.Lastfm.Repositories;
 using LastgramTest.Helpers;
 using Moq;
 using NUnit.Framework;
@@ -12,14 +13,14 @@ namespace LastgramTest.Commands
     {
         private SetLastfmUsernameCommand setLastfmUsernameCommand;
 
-        private Mock<IUserRepository> userRepositoryMock;
+        private Mock<ILastfmUsernameService> lastfmUsernameServiceMock;
 
         [SetUp]
         public void Setup()
         {
-            userRepositoryMock = new();
+            lastfmUsernameServiceMock = new();
 
-            setLastfmUsernameCommand = new SetLastfmUsernameCommand(userRepositoryMock.Object);
+            setLastfmUsernameCommand = new(lastfmUsernameServiceMock.Object);
         }
 
         [TestCase("John", true)]
@@ -43,15 +44,15 @@ namespace LastgramTest.Commands
 
             if (shouldGetAdded)
             {
-                userRepositoryMock.Verify(
-                mocks => mocks.AddOrUpdateUserAsync(It.Is<int>(id => id == 1),
+                lastfmUsernameServiceMock.Verify(
+                mocks => mocks.AddOrUpdateUsernameAsync(It.Is<int>(id => id == 1),
                 It.Is<string>(username => username == lastfmUsername)),
                 Times.Once);
             }
             else
             {
-                userRepositoryMock.Verify(
-                   mocks => mocks.AddOrUpdateUserAsync(It.IsAny<int>(),
+                lastfmUsernameServiceMock.Verify(
+                   mocks => mocks.AddOrUpdateUsernameAsync(It.IsAny<int>(),
                    It.IsAny<string>()),
                    Times.Never);
             }
@@ -94,8 +95,8 @@ namespace LastgramTest.Commands
             }
             catch (CommandException)
             {
-                userRepositoryMock.Verify(
-                   mocks => mocks.AddOrUpdateUserAsync(It.IsAny<int>(),
+                lastfmUsernameServiceMock.Verify(
+                   mocks => mocks.AddOrUpdateUsernameAsync(It.IsAny<int>(),
                    It.IsAny<string>()),
                    Times.Never);
 

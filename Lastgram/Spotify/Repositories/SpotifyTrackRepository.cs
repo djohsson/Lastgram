@@ -1,9 +1,10 @@
-﻿using Lastgram.Models;
+﻿using Lastgram.Data;
+using Lastgram.Data.Models;
 using Lastgram.Utils;
 using System;
 using System.Threading.Tasks;
 
-namespace Lastgram.Data.Repositories
+namespace Lastgram.Spotify.Repositories
 {
     public class SpotifyTrackRepository : ISpotifyTrackRepository
     {

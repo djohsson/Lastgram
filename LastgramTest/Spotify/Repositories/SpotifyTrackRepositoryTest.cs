@@ -1,13 +1,13 @@
 ﻿using Lastgram.Data;
-using Lastgram.Data.Repositories;
-using Lastgram.Models;
+using Lastgram.Data.Models;
+using Lastgram.Spotify.Repositories;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LastgramTest.Data
+namespace LastgramTest.Spotify.Repositories
 {
     [TestFixture]
     public class SpotifyTrackRepositoryTest

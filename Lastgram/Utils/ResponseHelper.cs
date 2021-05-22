@@ -2,11 +2,11 @@
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace Lastgram.Response
+namespace Lastgram.Utils
 {
-    public class TrackResponseService : ITrackResponseService
+    public static class ResponseHelper
     {
-        public string GetResponseForTrack(LastTrack track, string url)
+        public static string GetResponseForTrack(LastTrack track, string url)
         {
             var artistAndTrack = HttpUtility.HtmlEncode($"{track.ArtistName} - {track.Name}");
             string encodedLastfmUrl = Regex.Replace(track.Url.AbsoluteUri, "([\"])", @"\$1");

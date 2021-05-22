@@ -1,5 +1,6 @@
 ﻿using IF.Lastfm.Core.Api;
 using IF.Lastfm.Core.Objects;
+using Lastgram.Lastfm.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,10 +12,12 @@ namespace Lastgram.Lastfm
         private const int TOP_TRACKS_COUNT = 5;
 
         private readonly IUserApi userApi;
+        private readonly ILastfmUsernameRepository userRepository;
 
-        public LastfmService(IUserApi userApi)
+        public LastfmService(IUserApi userApi, ILastfmUsernameRepository userRepository)
         {
             this.userApi = userApi;
+            this.userRepository = userRepository;
         }
 
         public async Task<LastfmTrackResponse> GetNowPlayingAsync(string username)

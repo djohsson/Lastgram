@@ -1,4 +1,4 @@
-﻿using Lastgram.Data.Repositories;
+﻿using Lastgram.Lastfm;
 using System;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
@@ -7,11 +7,11 @@ namespace Lastgram.Commands
 {
     public class ForgetMeCommand : ICommand
     {
-        private readonly IUserRepository userRepository;
+        private readonly ILastfmUsernameService lastfmUsernameService;
 
-        public ForgetMeCommand(IUserRepository userRepository)
+        public ForgetMeCommand(ILastfmUsernameService lastfmUsernameService)
         {
-            this.userRepository = userRepository;
+            this.lastfmUsernameService = lastfmUsernameService;
         }
 
         public string CommandName => "forgetme";
@@ -20,7 +20,7 @@ namespace Lastgram.Commands
 
         public async Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
-            await userRepository.RemoveUserAsync(message.From.Id);
+            await lastfmUsernameService.RemoveUsernameAsync(message.From.Id);
 
             await responseFunc(message.Chat, "You have been removed! 👊😎");
         }

@@ -1,4 +1,4 @@
-﻿using Lastgram.Models;
+﻿using Lastgram.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;

@@ -2,10 +2,10 @@
 using IF.Lastfm.Core.Api;
 using Lastgram.Commands;
 using Lastgram.Data;
-using Lastgram.Data.Repositories;
 using Lastgram.Lastfm;
-using Lastgram.Response;
+using Lastgram.Lastfm.Repositories;
 using Lastgram.Spotify;
+using Lastgram.Spotify.Repositories;
 using Microsoft.EntityFrameworkCore;
 using SpotifyAPI.Web;
 using System;
@@ -40,7 +40,6 @@ namespace Lastgram
             RegisterDbContext(builder);
             RegisterLastAuth(builder);
             RegisterCommands(builder);
-            RegisterRepositories(builder);
             RegisterServices(builder);
 
             builder.RegisterType<Bot>().As<IBot>();
@@ -51,14 +50,18 @@ namespace Lastgram
 
         private static void RegisterServices(ContainerBuilder builder)
         {
-            builder.RegisterType<LastfmService>().As<ILastfmService>().SingleInstance();
-            builder.RegisterType<ArtistService>().As<IArtistService>().SingleInstance();
-            builder.RegisterType<TrackResponseService>().As<ITrackResponseService>().SingleInstance();
-
-            RegisterSpotifyService(builder);
+            RegisterLastfmServices(builder);
+            RegisterSpotifyServices(builder);
         }
 
-        private static void RegisterSpotifyService(ContainerBuilder builder)
+        private static void RegisterLastfmServices(ContainerBuilder builder)
+        {
+            builder.RegisterType<LastfmUsernameRepository>().As<ILastfmUsernameRepository>().SingleInstance();
+            builder.RegisterType<LastfmService>().As<ILastfmService>().SingleInstance();
+            builder.RegisterType<LastfmUsernameService>().As<ILastfmUsernameService>().SingleInstance();
+        }
+
+        private static void RegisterSpotifyServices(ContainerBuilder builder)
         {
             builder.Register<Func<SpotifyClientConfig, ISpotifyClient>>(c =>
             {
@@ -75,11 +78,8 @@ namespace Lastgram
             builder.RegisterType<OAuthClient>().As<IOAuthClient>();
 
             builder.RegisterType<SpotifyService>().As<ISpotifyService>().SingleInstance();
-        }
+            builder.RegisterType<ArtistService>().As<IArtistService>().SingleInstance();
 
-        private static void RegisterRepositories(ContainerBuilder builder)
-        {
-            builder.RegisterType<UserRepository>().As<IUserRepository>().SingleInstance();
             builder.RegisterType<SpotifyTrackRepository>().As<ISpotifyTrackRepository>().SingleInstance();
             builder.RegisterType<ArtistRepository>().As<IArtistRepository>().SingleInstance();
         }

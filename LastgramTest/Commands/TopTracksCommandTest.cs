@@ -1,7 +1,5 @@
 ﻿using Lastgram.Commands;
-using Lastgram.Data.Repositories;
 using Lastgram.Lastfm;
-using Lastgram.Response;
 using Lastgram.Spotify;
 using LastgramTest.Helpers;
 using Moq;
@@ -16,30 +14,27 @@ namespace LastgramTest.Commands
         private TopTracksCommand topTracksCommand;
 
         private Mock<ILastfmService> lastfmServiceMock;
-        private Mock<IUserRepository> userRepositoryMock;
+        private Mock<ILastfmUsernameService> lastfmUserServiceMock;
         private Mock<ISpotifyService> spotifyServiceMock;
-        private Mock<ITrackResponseService> trackResponseServiceMock;
 
         [SetUp]
         public void Setup()
         {
             lastfmServiceMock = new();
-            userRepositoryMock = new();
+            lastfmUserServiceMock = new();
             spotifyServiceMock = new();
-            trackResponseServiceMock = new();
 
             topTracksCommand = new(
                 lastfmServiceMock.Object,
-                userRepositoryMock.Object,
-                spotifyServiceMock.Object,
-                trackResponseServiceMock.Object);
+                lastfmUserServiceMock.Object,
+                spotifyServiceMock.Object);
         }
 
         [Test]
         public void DoNotGetTracksIfNoUsernameIsSet()
         {
-            userRepositoryMock
-                .Setup(m => m.TryGetUserAsync(It.IsAny<int>()))
+            lastfmUserServiceMock
+                .Setup(m => m.TryGetUsernameAsync(It.IsAny<int>()))
                 .ReturnsAsync(string.Empty);
 
             Assert.ThrowsAsync<CommandException>(

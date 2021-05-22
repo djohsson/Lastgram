@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Lastgram.Models
+namespace Lastgram.Data.Models
 {
     public class SpotifyTrack
     {

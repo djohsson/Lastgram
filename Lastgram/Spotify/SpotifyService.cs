@@ -1,6 +1,5 @@
-﻿using Lastgram.Data;
-using Lastgram.Data.Repositories;
-using Lastgram.Models;
+﻿using Lastgram.Data.Models;
+using Lastgram.Spotify.Repositories;
 using SpotifyAPI.Web;
 using System;
 using System.Linq;

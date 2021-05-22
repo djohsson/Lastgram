@@ -1,24 +1,20 @@
-﻿using Lastgram.Models;
+﻿using Lastgram.Data;
+using Lastgram.Data.Models;
 using System.Threading.Tasks;
 
-namespace Lastgram.Data.Repositories
+namespace Lastgram.Lastfm.Repositories
 {
-    public  class UserRepository : IUserRepository
+    public class LastfmUsernameRepository : ILastfmUsernameRepository
     {
         private readonly IMyDbContext context;
 
-        public UserRepository(IMyDbContext context)
+        public LastfmUsernameRepository(IMyDbContext context)
         {
             this.context = context;
         }
 
         public async Task AddOrUpdateUserAsync(int telegramUserId, string lastFmUsername)
         {
-            if (string.IsNullOrEmpty(lastFmUsername))
-            {
-                return;
-            }
-
             var user = await context.Users.FindAsync(telegramUserId);
 
             if (user == null)
@@ -28,11 +24,23 @@ namespace Lastgram.Data.Repositories
                     TelegramUserId = telegramUserId,
                     LastfmUsername = lastFmUsername,
                 });
-            } else
+            }
+            else
             {
                 user.LastfmUsername = lastFmUsername;
                 context.Users.Update(user);
             }
+
+            await context.SaveChangesAsync();
+        }
+
+        public async Task AddUserAsync(int telegramUserId, string lastFmUsername)
+        {
+            await context.Users.AddAsync(new User
+            {
+                TelegramUserId = telegramUserId,
+                LastfmUsername = lastFmUsername,
+            });
 
             await context.SaveChangesAsync();
         }
@@ -56,6 +64,21 @@ namespace Lastgram.Data.Repositories
             var user = await context.Users.FindAsync(telegramUserId);
 
             return user?.LastfmUsername;
+        }
+
+        public async Task UpdateUserAsync(int telegramUserId, string lastFmUsername)
+        {
+            var user = await context.Users.FindAsync(telegramUserId);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            user.LastfmUsername = lastFmUsername;
+            context.Users.Update(user);
+
+            await context.SaveChangesAsync();
         }
     }
 }

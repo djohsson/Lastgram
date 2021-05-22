@@ -1,6 +1,6 @@
 ﻿using Lastgram.Data;
-using Lastgram.Data.Repositories;
-using Lastgram.Models;
+using Lastgram.Data.Models;
+using Lastgram.Lastfm.Repositories;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
@@ -8,10 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LastgramTest.Data
+namespace LastgramTest.Lastfm.Repositories
 {
     [TestFixture]
-    public class UserRepositoryTest
+    public class LastfmUsernameRepositoryTest
     {
         private DbContextOptions<MyDbContext> options;
 
@@ -35,42 +35,32 @@ namespace LastgramTest.Data
                 context.SaveChanges();
             }
         }
- 
-        [TestCase("", false)]
-        [TestCase(null, false)]
-        [TestCase("Bob", true)]
-        public async Task AddAsyncRequiresUsername(string username, bool valid)
+
+        public async Task CanAddUsernameToDb()
         {
             using (var context = new MyDbContext(options))
             {
-                var userRepository = new UserRepository(context);
+                var lastfmUsernameRepository = new LastfmUsernameRepository(context);
 
-                await userRepository.AddOrUpdateUserAsync(4, username);
+                await lastfmUsernameRepository.AddOrUpdateUserAsync(4, "Bob");
             }
-            
+
             using (var context = new MyDbContext(options))
             {
                 var user = await context.Users.FindAsync(4);
 
-                if (valid)
-                {
-                    Assert.NotNull(user);
-                }
-                else
-                {
-                    Assert.Null(user);
-                }
+                Assert.Equals("Bob", user);
             }
         }
 
         [Test]
-        public async Task AddAsyncExistingUserShouldBeUpdated()
+        public async Task AddExistingUserShouldBeUpdated()
         {
             using (var context = new MyDbContext(options))
             {
-                var userRepository = new UserRepository(context);
+                var lastfmUsernameRepository = new LastfmUsernameRepository(context);
 
-                await userRepository.AddOrUpdateUserAsync(1, "Bob"); 
+                await lastfmUsernameRepository.AddOrUpdateUserAsync(1, "Bob");
             }
 
             using (var context = new MyDbContext(options))
@@ -86,9 +76,9 @@ namespace LastgramTest.Data
         {
             using (var context = new MyDbContext(options))
             {
-                var userRepository = new UserRepository(context);
+                var lastfmUsernameRepository = new LastfmUsernameRepository(context);
 
-                await userRepository.RemoveUserAsync(4);
+                await lastfmUsernameRepository.RemoveUserAsync(4);
             }
 
             using (var context = new MyDbContext(options))
@@ -105,9 +95,9 @@ namespace LastgramTest.Data
         {
             using (var context = new MyDbContext(options))
             {
-                var userRepository = new UserRepository(context);
+                var lastfmUsernameRepository = new LastfmUsernameRepository(context);
 
-                await userRepository.RemoveUserAsync(3);
+                await lastfmUsernameRepository.RemoveUserAsync(3);
             }
 
             using (var context = new MyDbContext(options))
@@ -126,9 +116,9 @@ namespace LastgramTest.Data
         {
             using (var context = new MyDbContext(options))
             {
-                var userRepository = new UserRepository(context);
+                var lastfmUsernameRepository = new LastfmUsernameRepository(context);
 
-                var user = await userRepository.TryGetUserAsync(telegramUserId);
+                var user = await lastfmUsernameRepository.TryGetUserAsync(telegramUserId);
 
                 if (exists)
                 {

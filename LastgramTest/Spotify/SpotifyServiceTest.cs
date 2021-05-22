@@ -1,6 +1,5 @@
-﻿using Lastgram.Data;
-using Lastgram.Data.Repositories;
-using Lastgram.Spotify;
+﻿using Lastgram.Spotify;
+using Lastgram.Spotify.Repositories;
 using Moq;
 using NUnit.Framework;
 using SpotifyAPI.Web;

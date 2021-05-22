@@ -1,11 +1,11 @@
-﻿using Lastgram.Data;
-using Lastgram.Data.Repositories;
-using Lastgram.Models;
+﻿using Lastgram.Data.Models;
+using Lastgram.Spotify;
+using Lastgram.Spotify.Repositories;
 using Moq;
 using NUnit.Framework;
 using System.Threading.Tasks;
 
-namespace LastgramTest.Data
+namespace LastgramTest.Spotify
 {
     [TestFixture]
     public class ArtistServiceTest

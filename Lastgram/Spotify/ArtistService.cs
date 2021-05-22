@@ -1,8 +1,8 @@
-﻿using Lastgram.Data.Repositories;
-using Lastgram.Models;
+﻿using Lastgram.Data.Models;
+using Lastgram.Spotify.Repositories;
 using System.Threading.Tasks;
 
-namespace Lastgram.Data
+namespace Lastgram.Spotify
 {
     public class ArtistService : IArtistService
     {

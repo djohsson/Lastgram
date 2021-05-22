@@ -1,8 +1,9 @@
-﻿using Lastgram.Models;
+﻿using Lastgram.Data;
+using Lastgram.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
-namespace Lastgram.Data.Repositories
+namespace Lastgram.Spotify.Repositories
 {
     public class ArtistRepository : IArtistRepository
     {
