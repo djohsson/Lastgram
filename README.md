@@ -2,6 +2,13 @@
 A Telegram bot that will query last.fm for the currently playing song of the specified user, and send a link to the song on Spotify (if it exists)
 
 ## Usage
+Available commands:
+* `/setusername`    Set last.fm username
+* `/np`             Post now playing information
+* `/toptracks`      Post top tracks of the week
+* `/forgetme`       Remove last.fm username
+
+## Setup
 
 Running the bot with Docker requires the following environment variables to be set:
 - LASTGRAM_DOCKER_CONNECTIONSTRING
