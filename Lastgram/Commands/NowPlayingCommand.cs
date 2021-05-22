@@ -34,34 +34,26 @@ namespace Lastgram.Commands
 
             if (string.IsNullOrEmpty(lastfmUsername))
             {
-                lastfmUsername = string.IsNullOrEmpty(message.From.Username)
-                    ? message.From.FirstName
-                    : message.From.Username;
-
-                await lastfmUsernameService.AddOrUpdateUsernameAsync(message.From.Id, lastfmUsername);
+                throw new CommandException("Seems like you haven't registered a username 😢");
             }
 
             var track = await lastfmService.GetNowPlayingAsync(lastfmUsername);
 
-            string response;
-
-            if (track.IsSuccess)
+            if (!track.IsSuccess)
             {
-                var url = await spotifyService.TryGetLinkToTrackAsync(track.Track.ArtistName, track.Track.Name);
+                string encodedUsername = HttpUtility.HtmlEncode(lastfmUsername);
 
-                response = GetResponseMessage(lastfmUsername, track, url);
+                throw new CommandException($"Could not find <i>{encodedUsername}</i> on last.fm 😢");
             }
-            else
-            {
-                lastfmUsername = HttpUtility.HtmlEncode(lastfmUsername);
 
-                throw new CommandException($"Could not find <i>{lastfmUsername}</i> on last.fm 😢");
-            }
+            var url = await spotifyService.TryGetLinkToTrackAsync(track.Track.ArtistName, track.Track.Name);
+
+            string response = GetResponseMessage(lastfmUsername, track, url);
 
             await responseFunc(message.Chat, response);
         }
 
-        private string GetResponseMessage(string lastfmUsername, LastfmTrackResponse track, string url)
+        private static string GetResponseMessage(string lastfmUsername, LastfmTrackResponse track, string url)
         {
             string response;
             string encodedUsername = HttpUtility.HtmlEncode(lastfmUsername);
