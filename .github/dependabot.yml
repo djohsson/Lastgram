@@ -6,18 +6,18 @@
 version: 2
 updates:
   - package-ecosystem: "nuget"
-    directory: "/Lastgram" # Location of package manifests
+    directory: "/src/Lastgram" # Location of package manifests
     schedule:
       interval: "weekly"
   - package-ecosystem: "nuget"
-    directory: "/Core" # Location of package manifests
+    directory: "/src/Core" # Location of package manifests
     schedule:
       interval: "weekly"
   - package-ecosystem: "nuget"
-    directory: "/LastgramTest" # Location of package manifests
+    directory: "/src/LastgramTest" # Location of package manifests
     schedule:
       interval: "weekly"
   - package-ecosystem: "nuget"
-    directory: "/CoreTest" # Location of package manifests
+    directory: "/src/CoreTest" # Location of package manifests
     schedule:
       interval: "weekly"
