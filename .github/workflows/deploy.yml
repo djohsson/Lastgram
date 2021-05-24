@@ -36,7 +36,8 @@ jobs:
         with:
           filters: |
             Lastgram:
-              - 'Lastgram/**'
+              - 'src/Lastgram/**'
+              - 'src/Core/**'
       
       - name: Prepare
         id: prep

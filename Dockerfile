@@ -11,7 +11,7 @@ COPY src/Lastgram/Lastgram.csproj ./Lastgram/Lastgram.csproj
 COPY src/Core/Core.csproj ./Core/Core.csproj
 
 WORKDIR /
-COPY LastgramDocker.sln .
+COPY docker/LastgramDocker.sln .
 RUN dotnet restore
 
 COPY . .
