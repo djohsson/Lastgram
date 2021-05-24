@@ -33,18 +33,15 @@ namespace Core.Domain.Services.Lastfm
 
             int? userPlayCount = await GetPlayedCountAsync(track.Name, track.ArtistName, username);
 
-            return new LastfmScrobble()
-            {
-                LastfmTrack = new LastfmTrack
-                {
-                    Name = track.Name,
-                    ArtistName = track.ArtistName,
-                    UserPlayCount = userPlayCount,
-                    Url = track.Url,
-                },
-                IsNowPlaying = track.IsNowPlaying.Value,
-                TimePlayed = track.TimePlayed?.DateTime,
-            };
+            return new LastfmScrobble(
+                new LastfmTrack(
+                    track.Name,
+                    track.ArtistName,
+                    track.Url,
+                    userPlayCount),
+                track.IsNowPlaying.HasValue && track.IsNowPlaying.HasValue,
+                track.TimePlayed?.DateTime
+            );
         }
 
         public async Task<IReadOnlyList<LastfmTrack>> GetTopTracksAsync(string username)
@@ -72,11 +69,11 @@ namespace Core.Domain.Services.Lastfm
 
         private static LastfmTrack ToLastfmTrack(LastTrack track)
         {
-            return new LastfmTrack
-            {
-                Name = track.Name,
-                ArtistName = track.ArtistName
-            };
+            return new LastfmTrack(
+                track.Name,
+                track.ArtistName,
+                track.Url,
+                track.UserPlayCount);
         }
     }
 }

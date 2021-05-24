@@ -1,7 +1,6 @@
 ﻿using Core.Domain.Models.Lastfm;
 using Core.Domain.Services.Lastfm;
 using Core.Domain.Services.Spotify;
-using IF.Lastfm.Core.Objects;
 using Lastgram.Commands;
 using LastgramTest.Helpers;
 using Moq;
@@ -42,15 +41,15 @@ namespace LastgramTest.Commands
 
             lastfmServiceMock
                 .Setup(m => m.GetLatestScrobbleAsync(It.IsAny<string>()))
-                .ReturnsAsync(new LastfmScrobble
-                {
-                    LastfmTrack = new LastfmTrack
-                    {
-                        ArtistName = "artist",
-                        Name = "name",
-                        Url = new Uri("https://lastfm/track")
-                    }
-                });
+                .ReturnsAsync(new LastfmScrobble(
+                    new LastfmTrack(
+                        "artist",
+                        "name",
+                        new Uri("https://lastfm/track"),
+                        5),
+                    true,
+                    null
+                ));
 
             await nowPlayingCommand.ExecuteCommandAsync(
                 MessageHelper.CreateCommandMessage(nowPlayingCommand),

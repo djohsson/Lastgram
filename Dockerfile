@@ -6,16 +6,19 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim-amd64 AS build
 WORKDIR /src
-COPY ["Lastgram/Lastgram.csproj", "Lastgram/"]
-RUN dotnet restore "Lastgram/Lastgram.csproj"
+COPY LastgramDocker.sln .
+COPY Lastgram/Lastgram.csproj ./Lastgram/Lastgram.csproj
+COPY Core/Core.csproj ./Core/Core.csproj
+RUN dotnet restore
+
 COPY . .
-WORKDIR "/src/Lastgram"
-RUN dotnet build "Lastgram.csproj" -c Release -o /app/build
+WORKDIR /src/Lastgram
+RUN dotnet build Lastgram.csproj -c Release -o /app/build
 
 FROM build AS publish
 # Set UseAppHost=false to avoid creating a rid specific executable.
 # Without this, the executable would be linux-amd64 specific.
-RUN dotnet publish "Lastgram.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
+RUN dotnet publish Lastgram.csproj -c Release -o /app/publish /p:UseAppHost=false --no-restore
 
 FROM base AS final
 WORKDIR /app
