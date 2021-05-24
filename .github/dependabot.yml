@@ -13,11 +13,3 @@ updates:
     directory: "/src/Core" # Location of package manifests
     schedule:
       interval: "weekly"
-  - package-ecosystem: "nuget"
-    directory: "/src/LastgramTest" # Location of package manifests
-    schedule:
-      interval: "weekly"
-  - package-ecosystem: "nuget"
-    directory: "/src/CoreTest" # Location of package manifests
-    schedule:
-      interval: "weekly"
