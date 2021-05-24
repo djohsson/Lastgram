@@ -4,7 +4,7 @@ using System.Web;
 
 namespace Lastgram.Utils
 {
-    public static class ResponseHelper
+    internal static class ResponseHelper
     {
         public static string GetResponseForTrack(LastfmTrack track, string spotifyUrl)
         {
