@@ -5,10 +5,13 @@ FROM mcr.microsoft.com/dotnet/runtime:5.0 AS base
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim-amd64 AS build
+
 WORKDIR /src
+COPY src/Lastgram/Lastgram.csproj ./Lastgram/Lastgram.csproj
+COPY src/Core/Core.csproj ./Core/Core.csproj
+
+WORKDIR /
 COPY LastgramDocker.sln .
-COPY Lastgram/Lastgram.csproj ./Lastgram/Lastgram.csproj
-COPY Core/Core.csproj ./Core/Core.csproj
 RUN dotnet restore
 
 COPY . .
