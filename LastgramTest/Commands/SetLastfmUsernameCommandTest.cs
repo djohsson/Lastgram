@@ -1,6 +1,5 @@
-﻿using Lastgram.Commands;
-using Lastgram.Lastfm;
-using Lastgram.Lastfm.Repositories;
+﻿using Core.Domain.Services.Lastfm;
+using Lastgram.Commands;
 using LastgramTest.Helpers;
 using Moq;
 using NUnit.Framework;

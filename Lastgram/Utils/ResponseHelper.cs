@@ -1,4 +1,4 @@
-﻿using IF.Lastfm.Core.Objects;
+﻿using Core.Domain.Models.Lastfm;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -6,7 +6,7 @@ namespace Lastgram.Utils
 {
     public static class ResponseHelper
     {
-        public static string GetResponseForTrack(LastTrack track, string url)
+        public static string GetResponseForTrack(LastfmTrack track, string spotifyUrl)
         {
             var artistAndTrack = HttpUtility.HtmlEncode($"{track.ArtistName} - {track.Name}");
             string encodedLastfmUrl = Regex.Replace(track.Url.AbsoluteUri, "([\"])", @"\$1");
@@ -15,9 +15,9 @@ namespace Lastgram.Utils
 
             response += "🔗 ";
 
-            if (!string.IsNullOrEmpty(url))
+            if (!string.IsNullOrEmpty(spotifyUrl))
             {
-                response += $"<a href =\"{url}\">Spotify</a> | ";
+                response += $"<a href =\"{spotifyUrl}\">Spotify</a> | ";
             }
 
             response += $"<a href =\"{encodedLastfmUrl}\">Lastfm</a>";

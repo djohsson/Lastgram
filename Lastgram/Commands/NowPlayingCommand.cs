@@ -1,5 +1,6 @@
-﻿using Lastgram.Lastfm;
-using Lastgram.Spotify;
+﻿using Core.Domain.Models.Lastfm;
+using Core.Domain.Services.Lastfm;
+using Core.Domain.Services.Spotify;
 using Lastgram.Utils;
 using System;
 using System.Threading.Tasks;
@@ -37,28 +38,30 @@ namespace Lastgram.Commands
                 throw new CommandException("Seems like you haven't registered a username 😢");
             }
 
-            var track = await lastfmService.GetNowPlayingAsync(lastfmUsername);
+            var latestScrobble = await lastfmService.GetLatestScrobbleAsync(lastfmUsername);
 
-            if (!track.IsSuccess)
+            if (latestScrobble == null)
             {
                 string encodedUsername = HttpUtility.HtmlEncode(lastfmUsername);
 
                 throw new CommandException($"Could not find <i>{encodedUsername}</i> on last.fm 😢");
             }
 
-            var url = await spotifyService.TryGetLinkToTrackAsync(track.Track.ArtistName, track.Track.Name);
+            var url = await spotifyService.TryGetLinkToTrackAsync(
+                latestScrobble.LastfmTrack.ArtistName,
+                latestScrobble.LastfmTrack.Name);
 
-            string response = GetResponseMessage(lastfmUsername, track, url);
+            string response = GetResponseMessage(lastfmUsername, latestScrobble, url);
 
             await responseFunc(message.Chat, response);
         }
 
-        private static string GetResponseMessage(string lastfmUsername, LastfmTrackResponse track, string url)
+        private static string GetResponseMessage(string lastfmUsername, LastfmScrobble lastfmScrobble, string spotifyUrl)
         {
             string response;
             string encodedUsername = HttpUtility.HtmlEncode(lastfmUsername);
 
-            if (track.Track.IsNowPlaying ?? false)
+            if (lastfmScrobble.IsNowPlaying)
             {
                 response = $"<i>{encodedUsername} is currently playing</i>\n";
             }
@@ -67,18 +70,25 @@ namespace Lastgram.Commands
                 response = $"<i>{encodedUsername} played</i>\n";
             }
 
-            response += ResponseHelper.GetResponseForTrack(track.Track, url);
+            response += ResponseHelper.GetResponseForTrack(lastfmScrobble.LastfmTrack, spotifyUrl);
             response += "\n";
 
-            if (!track.Track.IsNowPlaying ?? true)
+            int? userPlayCount = lastfmScrobble.LastfmTrack.UserPlayCount;
+
+            if (userPlayCount.HasValue)
             {
-                response += $"<i>on {GetTimePlayed(track)}</i>";
+                response += $"🎧 {userPlayCount.Value}\n";
+            }
+
+            if (!lastfmScrobble.IsNowPlaying)
+            {
+                response += $"<i>on {GetTimePlayed(lastfmScrobble)}</i>";
             }
 
             return response;
         }
 
-        private static string GetTimePlayed(LastfmTrackResponse track)
-            => track.Track.TimePlayed?.DateTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+        private static string GetTimePlayed(LastfmScrobble track)
+            => track.TimePlayed?.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
     }
 }

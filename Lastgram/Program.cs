@@ -1,11 +1,11 @@
 ﻿using Autofac;
+using Core.Data;
+using Core.Domain.Repositories.Lastfm;
+using Core.Domain.Repositories.Spotify;
+using Core.Domain.Services.Lastfm;
+using Core.Domain.Services.Spotify;
 using IF.Lastfm.Core.Api;
 using Lastgram.Commands;
-using Lastgram.Data;
-using Lastgram.Lastfm;
-using Lastgram.Lastfm.Repositories;
-using Lastgram.Spotify;
-using Lastgram.Spotify.Repositories;
 using Microsoft.EntityFrameworkCore;
 using SpotifyAPI.Web;
 using System;
@@ -38,27 +38,29 @@ namespace Lastgram
         {
             var builder = new ContainerBuilder();
             RegisterDbContext(builder);
-            RegisterLastAuth(builder);
             RegisterCommands(builder);
             RegisterServices(builder);
 
             builder.RegisterType<Bot>().As<IBot>();
-            builder.RegisterType<UserApi>().As<IUserApi>().SingleInstance();
 
             Container = builder.Build();
         }
 
         private static void RegisterServices(ContainerBuilder builder)
         {
-            RegisterLastfmServices(builder);
+            RegisterLastfm(builder);
             RegisterSpotifyServices(builder);
         }
 
-        private static void RegisterLastfmServices(ContainerBuilder builder)
+        private static void RegisterLastfm(ContainerBuilder builder)
         {
+            RegisterLastAuth(builder);
+
             builder.RegisterType<LastfmUsernameRepository>().As<ILastfmUsernameRepository>().SingleInstance();
             builder.RegisterType<LastfmService>().As<ILastfmService>().SingleInstance();
             builder.RegisterType<LastfmUsernameService>().As<ILastfmUsernameService>().SingleInstance();
+            builder.RegisterType<UserApi>().As<IUserApi>().SingleInstance();
+            builder.RegisterType<TrackApi>().As<ITrackApi>().SingleInstance();
         }
 
         private static void RegisterSpotifyServices(ContainerBuilder builder)

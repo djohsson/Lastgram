@@ -1,7 +1,9 @@
-﻿using Lastgram.Lastfm;
-using Lastgram.Spotify;
+﻿using Core.Domain.Models.Lastfm;
+using Core.Domain.Services.Lastfm;
+using Core.Domain.Services.Spotify;
 using Lastgram.Utils;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web;
 using Telegram.Bot.Types;
@@ -38,23 +40,23 @@ namespace Lastgram.Commands
                 throw new CommandException("No username set 😢");
             }
 
-            LastfmTopTracksResponse topTracksResponse = await lastfmService.GetTopTracksAsync(lastfmUsername);
+            IReadOnlyList<LastfmTrack> topTracks = await lastfmService.GetTopTracksAsync(lastfmUsername);
 
-            if (!topTracksResponse.IsSuccess)
+            if (topTracks.Count == 0)
             {
                 throw new CommandException($"Could not retrieve top tracks for <i>{lastfmUsername}</i>");
             }
 
-            string response = await GetResponseAsync(lastfmUsername, topTracksResponse);
+            string response = await GetResponseAsync(lastfmUsername, topTracks);
 
             await responseFunc(message.Chat, response);
         }
 
-        private async Task<string> GetResponseAsync(string lastfmUsername, LastfmTopTracksResponse topTracksResponse)
+        private async Task<string> GetResponseAsync(string lastfmUsername, IReadOnlyList<LastfmTrack> topTracks)
         {
             string response = $"<i>{lastfmUsername}'s</i> top tracks for the week:\n";
 
-            foreach (var topTrack in topTracksResponse.TopTracks)
+            foreach (var topTrack in topTracks)
             {
                 var url = await spotifyService.TryGetLinkToTrackAsync(topTrack.ArtistName, topTrack.Name);
 

@@ -1,4 +1,4 @@
-﻿using Lastgram.Lastfm;
+﻿using Core.Domain.Services.Lastfm;
 using Lastgram.Utils;
 using System;
 using System.Linq;

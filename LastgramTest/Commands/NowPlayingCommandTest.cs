@@ -1,7 +1,8 @@
-﻿using IF.Lastfm.Core.Objects;
+﻿using Core.Domain.Models.Lastfm;
+using Core.Domain.Services.Lastfm;
+using Core.Domain.Services.Spotify;
+using IF.Lastfm.Core.Objects;
 using Lastgram.Commands;
-using Lastgram.Lastfm;
-using Lastgram.Spotify;
 using LastgramTest.Helpers;
 using Moq;
 using NUnit.Framework;
@@ -34,16 +35,16 @@ namespace LastgramTest.Commands
         public async Task UseUsernameFromService()
         {
             string usernameFromService = "username";
+
             lastfmUsernameServiceMock
                 .Setup(m => m.TryGetUsernameAsync(It.IsAny<int>()))
                 .ReturnsAsync(usernameFromService);
 
             lastfmServiceMock
-                .Setup(m => m.GetNowPlayingAsync(It.IsAny<string>()))
-                .ReturnsAsync(new LastfmTrackResponse
+                .Setup(m => m.GetLatestScrobbleAsync(It.IsAny<string>()))
+                .ReturnsAsync(new LastfmScrobble
                 {
-                    IsSuccess = true,
-                    Track = new LastTrack
+                    LastfmTrack = new LastfmTrack
                     {
                         ArtistName = "artist",
                         Name = "name",
@@ -55,7 +56,7 @@ namespace LastgramTest.Commands
                 MessageHelper.CreateCommandMessage(nowPlayingCommand),
                 (chat, response) => Task.CompletedTask);
 
-            lastfmServiceMock.Verify(m => m.GetNowPlayingAsync(It.Is<string>(u => u == usernameFromService)), Times.Once);
+            lastfmServiceMock.Verify(m => m.GetLatestScrobbleAsync(It.Is<string>(u => u == usernameFromService)), Times.Once);
         }
 
         [Test]
@@ -75,24 +76,21 @@ namespace LastgramTest.Commands
         public void ThrowIfNoTrackIsFound()
         {
             string usernameFromService = "username";
+
             lastfmUsernameServiceMock
                 .Setup(m => m.TryGetUsernameAsync(It.IsAny<int>()))
                 .ReturnsAsync(usernameFromService);
 
             lastfmServiceMock
-                .Setup(m => m.GetNowPlayingAsync(It.IsAny<string>()))
-                .ReturnsAsync(new LastfmTrackResponse
-                {
-                    IsSuccess = false,
-                    Track = null,
-                });
+                .Setup(m => m.GetLatestScrobbleAsync(It.IsAny<string>()))
+                .ReturnsAsync(value: null);
 
             Assert.ThrowsAsync<CommandException>(async ()
                 => await nowPlayingCommand.ExecuteCommandAsync(
                     MessageHelper.CreateCommandMessage(nowPlayingCommand),
                     (chat, response) => Task.CompletedTask));
 
-            lastfmServiceMock.Verify(m => m.GetNowPlayingAsync(It.Is<string>(u => u == usernameFromService)), Times.Once);
+            lastfmServiceMock.Verify(m => m.GetLatestScrobbleAsync(It.Is<string>(u => u == usernameFromService)), Times.Once);
         }
     }
 }

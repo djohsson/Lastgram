@@ -1,6 +1,6 @@
-﻿using Lastgram.Commands;
-using Lastgram.Lastfm;
-using Lastgram.Spotify;
+﻿using Core.Domain.Services.Lastfm;
+using Core.Domain.Services.Spotify;
+using Lastgram.Commands;
 using LastgramTest.Helpers;
 using Moq;
 using NUnit.Framework;

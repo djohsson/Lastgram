@@ -1,4 +1,4 @@
-﻿using Lastgram.Lastfm;
+﻿using Core.Domain.Services.Lastfm;
 using System;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
