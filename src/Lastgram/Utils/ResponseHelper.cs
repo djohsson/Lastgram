@@ -6,12 +6,17 @@ namespace Lastgram.Utils
 {
     internal static class ResponseHelper
     {
-        public static string GetResponseForTrack(LastfmTrack track, string spotifyUrl)
+        public static string GetResponseForTrack(LastfmTrack track, string spotifyUrl, int? userPlayCount = null)
         {
             var artistAndTrack = HttpUtility.HtmlEncode($"{track.ArtistName} - {track.Name}");
             string encodedLastfmUrl = Regex.Replace(track.Url.AbsoluteUri, "([\"])", @"\$1");
 
             string response = $"🎵 <b>{artistAndTrack}</b>\n";
+
+            if (userPlayCount.HasValue)
+            {
+                response += $"🎧 {userPlayCount.Value}\n";
+            }
 
             response += "🔗 ";
 

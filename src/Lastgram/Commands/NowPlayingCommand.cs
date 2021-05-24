@@ -56,7 +56,10 @@ namespace Lastgram.Commands
             await responseFunc(message.Chat, response);
         }
 
-        private static string GetResponseMessage(string lastfmUsername, LastfmScrobble lastfmScrobble, string spotifyUrl)
+        private static string GetResponseMessage(
+            string lastfmUsername,
+            LastfmScrobble lastfmScrobble,
+            string spotifyUrl)
         {
             string response;
             string encodedUsername = HttpUtility.HtmlEncode(lastfmUsername);
@@ -70,15 +73,14 @@ namespace Lastgram.Commands
                 response = $"<i>{encodedUsername} played</i>\n";
             }
 
-            response += ResponseHelper.GetResponseForTrack(lastfmScrobble.LastfmTrack, spotifyUrl);
-            response += "\n";
-
             int? userPlayCount = lastfmScrobble.LastfmTrack.UserPlayCount;
 
-            if (userPlayCount.HasValue)
-            {
-                response += $"🎧 {userPlayCount.Value}\n";
-            }
+            response += ResponseHelper.GetResponseForTrack(
+                lastfmScrobble.LastfmTrack,
+                spotifyUrl,
+                userPlayCount);
+
+            response += "\n";
 
             if (!lastfmScrobble.IsNowPlaying)
             {
