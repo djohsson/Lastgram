@@ -36,36 +36,19 @@ namespace CoreTest.Domain.Repositories.Lastfm
             }
         }
 
+        [Test]
         public async Task CanAddUsernameToDb()
         {
             using (var context = new MyDbContext(options))
             {
                 var lastfmUsernameRepository = new LastfmUsernameRepository(context);
 
-                await lastfmUsernameRepository.AddOrUpdateUserAsync(4, "Bob");
+                await lastfmUsernameRepository.AddUserAsync(4, "Bob");
             }
 
             using (var context = new MyDbContext(options))
             {
                 var user = await context.Users.FindAsync(4);
-
-                Assert.Equals("Bob", user);
-            }
-        }
-
-        [Test]
-        public async Task AddExistingUserShouldBeUpdated()
-        {
-            using (var context = new MyDbContext(options))
-            {
-                var lastfmUsernameRepository = new LastfmUsernameRepository(context);
-
-                await lastfmUsernameRepository.AddOrUpdateUserAsync(1, "Bob");
-            }
-
-            using (var context = new MyDbContext(options))
-            {
-                var user = await context.Users.FindAsync(1);
 
                 Assert.AreEqual("Bob", user.LastfmUsername);
             }

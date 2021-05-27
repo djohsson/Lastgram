@@ -1,5 +1,6 @@
 ﻿using Core.Data;
 using Core.Data.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace Core.Domain.Repositories.Lastfm
@@ -11,27 +12,6 @@ namespace Core.Domain.Repositories.Lastfm
         public LastfmUsernameRepository(IMyDbContext context)
         {
             this.context = context;
-        }
-
-        public async Task AddOrUpdateUserAsync(int telegramUserId, string lastFmUsername)
-        {
-            var user = await context.Users.FindAsync(telegramUserId);
-
-            if (user == null)
-            {
-                await context.Users.AddAsync(new User
-                {
-                    TelegramUserId = telegramUserId,
-                    LastfmUsername = lastFmUsername,
-                });
-            }
-            else
-            {
-                user.LastfmUsername = lastFmUsername;
-                context.Users.Update(user);
-            }
-
-            await context.SaveChangesAsync();
         }
 
         public async Task AddUserAsync(int telegramUserId, string lastFmUsername)
