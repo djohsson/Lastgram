@@ -1,5 +1,4 @@
-﻿using Autofac;
-using Core.Data;
+﻿using Core.Data;
 using Core.Domain.Repositories.Lastfm;
 using Core.Domain.Repositories.Spotify;
 using Core.Domain.Services.Lastfm;
@@ -7,6 +6,7 @@ using Core.Domain.Services.Spotify;
 using IF.Lastfm.Core.Api;
 using Lastgram.Commands;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SpotifyAPI.Web;
 using System;
 using System.Threading;
@@ -16,108 +16,61 @@ namespace Lastgram
 {
     public class Program
     {
-        private static IContainer Container { get; set; }
-
         public static async Task Main()
         {
-            RegisterTypes();
+            ServiceCollection services = new();
 
-            using (var scope = Container.BeginLifetimeScope())
-            {
-                await ApplyMigrationsAsync(scope);
+            services.AddDbContext<IMyDbContext, MyDbContext>(options =>
+                options.UseNpgsql(Environment.GetEnvironmentVariable("LASTGRAM_CONNECTIONSTRING")))
+                .AddTransient<ILastfmUsernameRepository, LastfmUsernameRepository>()
+                .AddTransient<IArtistRepository, ArtistRepository>()
+                .AddTransient<ISpotifyTrackRepository, SpotifyTrackRepository>()
+                .AddTransient<ILastfmService, LastfmService>()
+                .AddTransient<ILastfmUsernameService, LastfmUsernameService>()
+                .AddTransient<IArtistService, ArtistService>()
+                .AddSingleton<ISpotifyService, SpotifyService>()
+                .AddTransient<IUserApi, UserApi>()
+                .AddTransient<ITrackApi, TrackApi>()
+                .AddTransient<IOAuthClient, OAuthClient>()
+                .AddTransient<ICommandHandler, CommandHandler>()
+                .AddTransient<ICommand, ForgetMeCommand>()
+                .AddTransient<ForgetMeCommand>()
+                .AddTransient<ICommand, NowPlayingCommand>()
+                .AddTransient<NowPlayingCommand>()
+                .AddTransient<ICommand, TopTracksCommand>()
+                .AddTransient<TopTracksCommand>()
+                .AddTransient<ICommand, SetLastfmUsernameCommand>()
+                .AddTransient<SetLastfmUsernameCommand>()
+                .AddTransient<IBot, Bot>()
+                .AddTransient<Func<SpotifyClientConfig, ISpotifyClient>>(c =>
+                {
+                    return config => new SpotifyClient(config);
+                })
+                .AddTransient<Func<ClientCredentialsRequest>>(c =>
+                {
+                    return () => new ClientCredentialsRequest(
+                        Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTID"),
+                        Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTSECRET"));
+                })
+                .AddSingleton<ILastAuth>(new LastAuth(
+                    Environment.GetEnvironmentVariable("LASTGRAM_LASTFM_APIKEY"),
+                    Environment.GetEnvironmentVariable("LASTGRAM_LASTFM_APISECRET")));
 
-                var bot = scope.Resolve<IBot>();
 
-                await bot.StartAsync();
+            var provider = services.BuildServiceProvider();
 
-                await Task.Run(() => Thread.Sleep(Timeout.Infinite));
-            }
+            await ApplyMigrationsAsync(provider);
+
+            var bot = provider.GetRequiredService<IBot>();
+
+            await bot.StartAsync();
+
+            await Task.Run(() => Thread.Sleep(Timeout.Infinite));
         }
 
-        private static void RegisterTypes()
+        private static async Task ApplyMigrationsAsync(ServiceProvider provider)
         {
-            var builder = new ContainerBuilder();
-            RegisterDbContext(builder);
-            RegisterCommands(builder);
-            RegisterServices(builder);
-
-            builder.RegisterType<Bot>().As<IBot>();
-
-            Container = builder.Build();
-        }
-
-        private static void RegisterServices(ContainerBuilder builder)
-        {
-            RegisterLastfm(builder);
-            RegisterSpotifyServices(builder);
-        }
-
-        private static void RegisterLastfm(ContainerBuilder builder)
-        {
-            RegisterLastAuth(builder);
-
-            builder.RegisterType<LastfmUsernameRepository>().As<ILastfmUsernameRepository>().SingleInstance();
-            builder.RegisterType<LastfmService>().As<ILastfmService>().SingleInstance();
-            builder.RegisterType<LastfmUsernameService>().As<ILastfmUsernameService>().SingleInstance();
-            builder.RegisterType<UserApi>().As<IUserApi>().SingleInstance();
-            builder.RegisterType<TrackApi>().As<ITrackApi>().SingleInstance();
-        }
-
-        private static void RegisterSpotifyServices(ContainerBuilder builder)
-        {
-            builder.Register<Func<SpotifyClientConfig, ISpotifyClient>>(c =>
-            {
-                return config => new SpotifyClient(config);
-            });
-
-            builder.Register<Func<ClientCredentialsRequest>>(c =>
-            {
-                return () => new ClientCredentialsRequest(
-                    Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTID"),
-                    Environment.GetEnvironmentVariable("LASTGRAM_SPOTIFY_CLIENTSECRET"));
-            });
-
-            builder.RegisterType<OAuthClient>().As<IOAuthClient>();
-
-            builder.RegisterType<SpotifyService>().As<ISpotifyService>().SingleInstance();
-            builder.RegisterType<ArtistService>().As<IArtistService>().SingleInstance();
-
-            builder.RegisterType<SpotifyTrackRepository>().As<ISpotifyTrackRepository>().SingleInstance();
-            builder.RegisterType<ArtistRepository>().As<IArtistRepository>().SingleInstance();
-        }
-
-        private static void RegisterCommands(ContainerBuilder builder)
-        {
-            builder.RegisterType<CommandHandler>().As<ICommandHandler>();
-            builder.RegisterType<ForgetMeCommand>().As<ICommand>().SingleInstance();
-            builder.RegisterType<NowPlayingCommand>().As<ICommand>().SingleInstance();
-            builder.RegisterType<TopTracksCommand>().As<ICommand>().SingleInstance();
-            builder.RegisterType<SetLastfmUsernameCommand>().As<ICommand>().SingleInstance();
-        }
-
-        private static void RegisterLastAuth(ContainerBuilder builder)
-        {
-            var auth = new LastAuth(
-                Environment.GetEnvironmentVariable("LASTGRAM_LASTFM_APIKEY"),
-                Environment.GetEnvironmentVariable("LASTGRAM_LASTFM_APISECRET"));
-
-            builder.RegisterInstance(auth).As<ILastAuth>();
-        }
-
-        private static void RegisterDbContext(ContainerBuilder builder)
-        {
-            var options = new DbContextOptionsBuilder<MyDbContext>()
-                .UseNpgsql(Environment.GetEnvironmentVariable("LASTGRAM_CONNECTIONSTRING"))
-                .Options;
-
-            var context = new MyDbContext(options);
-
-            builder.RegisterInstance(context).As<IMyDbContext>().SingleInstance();
-        }
-
-        private static async Task ApplyMigrationsAsync(ILifetimeScope scope)
-        {
-            var dbContext = scope.Resolve<IMyDbContext>();
+            var dbContext = provider.GetRequiredService<IMyDbContext>();
             await dbContext.Database.MigrateAsync();
         }
     }

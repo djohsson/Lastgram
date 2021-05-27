@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,22 +10,29 @@ namespace Lastgram.Commands
     internal class CommandHandler : ICommandHandler
     {
         private readonly IEnumerable<ICommand> commands;
+        private readonly IServiceProvider serviceProvider;
 
-        public CommandHandler(IEnumerable<ICommand> commands)
+        public CommandHandler(IServiceProvider serviceProvider, IEnumerable<ICommand> commands)
         {
             this.commands = new List<ICommand>(commands);
+            this.serviceProvider = serviceProvider;
         }
 
         public async Task ExecuteCommandAsync(Message message, Func<Chat, string, Task> responseFunc)
         {
-            if (!TryParseCommand(message, out ICommand command))
+            if (!TryParseCommandType(message, out Type type))
             {
                 return;
             }
 
             try
             {
-                await command.ExecuteCommandAsync(message, responseFunc);
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var command = (ICommand)scope.ServiceProvider.GetRequiredService(type);
+
+                    await command.ExecuteCommandAsync(message, responseFunc);
+                }
             }
             catch (CommandException e)
             {
@@ -42,9 +50,9 @@ namespace Lastgram.Commands
                 }).ToList();
         }
 
-        private bool TryParseCommand(Message message, out ICommand command)
+        private bool TryParseCommandType(Message message, out Type type)
         {
-            command = null;
+            type = null;
 
             if (string.IsNullOrEmpty(message.Text))
             {
@@ -61,7 +69,8 @@ namespace Lastgram.Commands
             commandText = RemoveBotNameFromCommand(commandText);
             commandText = commandText.ToLower();
 
-            command = commands.FirstOrDefault(c => c.CommandName.Equals(commandText));
+            var command = commands.FirstOrDefault(c => c.CommandName.Equals(commandText));
+            type = command.GetType();
 
             return command != null;
         }

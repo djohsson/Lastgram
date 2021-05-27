@@ -1,12 +1,13 @@
 ﻿using Core.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Core.Data
 {
-    public interface IMyDbContext
+    public interface IMyDbContext : IDisposable
     {
         DatabaseFacade Database { get; }
 
