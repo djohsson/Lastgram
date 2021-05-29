@@ -1,6 +1,6 @@
 ﻿using Core.Data;
 using Core.Data.Models;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace Core.Domain.Repositories.Lastfm
@@ -27,7 +27,7 @@ namespace Core.Domain.Repositories.Lastfm
 
         public async Task RemoveUserAsync(int telegramUserId)
         {
-            var user = await context.Users.FindAsync(telegramUserId);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.TelegramUserId == telegramUserId);
 
             if (user == null)
             {
@@ -41,14 +41,14 @@ namespace Core.Domain.Repositories.Lastfm
 
         public async Task<string> TryGetUserAsync(int telegramUserId)
         {
-            var user = await context.Users.FindAsync(telegramUserId);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.TelegramUserId == telegramUserId);
 
             return user?.LastfmUsername;
         }
 
         public async Task UpdateUserAsync(int telegramUserId, string lastFmUsername)
         {
-            var user = await context.Users.FindAsync(telegramUserId);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.TelegramUserId == telegramUserId);
 
             if (user == null)
             {

@@ -1,18 +1,12 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.Data.Models
 {
-    public class SpotifyTrack
+    [Index(nameof(Track))]
+    public class SpotifyTrack : BaseEntity
     {
-        [Key]
-        [MaxLength(32)]
-        public string Md5 { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
         [MaxLength(255)]
         public string Track { get; set; }
 
@@ -20,7 +14,7 @@ namespace Core.Data.Models
         [MaxLength(128)]
         public string Url { get; set; }
 
-        public int ArtistId { get; set; }
+        public Guid ArtistId { get; set; }
         public Artist Artist { get; set; }
     }
 }

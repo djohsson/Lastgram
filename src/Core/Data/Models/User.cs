@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Core.Data.Models
 {
-    public class User
+    [Index(nameof(TelegramUserId))]
+    public class User : BaseEntity
     {
-        [Key]
+        [Required]
         public int TelegramUserId { get; set; }
 
         [Required]

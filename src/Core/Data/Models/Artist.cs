@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Core.Data.Models
 {
-    public class Artist
+    [Index(nameof(Name))]
+    public class Artist : BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
-
         [MaxLength(255)]
+        [Required]
         public string Name { get; set; }
 
         public List<SpotifyTrack> Tracks { get; set; }

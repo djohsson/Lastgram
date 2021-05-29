@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Domain\Models\Spotify\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

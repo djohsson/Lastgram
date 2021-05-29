@@ -1,6 +1,6 @@
 ﻿using Core.Data;
 using Core.Data.Models;
-using Core.Utils;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
@@ -22,12 +22,19 @@ namespace Core.Domain.Repositories.Spotify
                 return;
             }
 
-            string artistAndName = FormatArtistAndTrack(artist.Name, track);
             string formattedTrack = track.Length > 255 ? track.Substring(0, 255) : track;
+
+            var existingTrack = await context.SpotifyTracks.FirstOrDefaultAsync(t =>
+                t.Track == formattedTrack &&
+                t.Artist.Name == artist.Name);
+
+            if (existingTrack != null)
+            {
+                return;
+            }
 
             var spotifyTrack = new SpotifyTrack
             {
-                Md5 = Hasher.CreateMD5(artistAndName),
                 Url = url,
                 Artist = artist,
                 Track = formattedTrack
@@ -47,11 +54,10 @@ namespace Core.Domain.Repositories.Spotify
 
         public async Task<string> TryGetSpotifyTrackUrlAsync(string artist, string track)
         {
-            string artistAndName = FormatArtistAndTrack(artist, track);
-
-            var md5 = Hasher.CreateMD5(artistAndName);
-
-            var spotifyTrack = await context.SpotifyTracks.FindAsync(md5);
+            var spotifyTrack = await context.SpotifyTracks
+                .FirstOrDefaultAsync(t =>
+                    t.Track.Equals(track)
+                    && t.Artist.Name.Equals(artist));
 
             if (spotifyTrack == null)
             {
@@ -59,11 +65,6 @@ namespace Core.Domain.Repositories.Spotify
             }
 
             return spotifyTrack.Url;
-        }
-
-        private static string FormatArtistAndTrack(string artist, string track)
-        {
-            return $"{artist} - {track}";
         }
     }
 }

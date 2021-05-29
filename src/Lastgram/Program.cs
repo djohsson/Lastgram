@@ -19,9 +19,29 @@ namespace Lastgram
         public static async Task Main()
         {
             ServiceCollection services = new();
+            ConfigureServices(services);
 
-            services.AddDbContext<IMyDbContext, MyDbContext>(options =>
-                options.UseNpgsql(Environment.GetEnvironmentVariable("LASTGRAM_CONNECTIONSTRING")))
+            var provider = services.BuildServiceProvider();
+
+            await ApplyMigrationsAsync(provider);
+
+            await RunBotAsync(provider);
+        }
+
+        private static async Task RunBotAsync(ServiceProvider provider)
+        {
+            var bot = provider.GetRequiredService<IBot>();
+
+            await bot.StartAsync();
+
+            await Task.Run(() => Thread.Sleep(Timeout.Infinite));
+        }
+
+        private static void ConfigureServices(ServiceCollection services)
+        {
+            services
+                .AddDbContext<IMyDbContext, MyDbContext>(
+                    options => options.UseNpgsql(Environment.GetEnvironmentVariable("LASTGRAM_CONNECTIONSTRING")))
                 .AddTransient<ILastfmUsernameRepository, LastfmUsernameRepository>()
                 .AddTransient<IArtistRepository, ArtistRepository>()
                 .AddTransient<ISpotifyTrackRepository, SpotifyTrackRepository>()
@@ -55,17 +75,6 @@ namespace Lastgram
                 .AddSingleton<ILastAuth>(new LastAuth(
                     Environment.GetEnvironmentVariable("LASTGRAM_LASTFM_APIKEY"),
                     Environment.GetEnvironmentVariable("LASTGRAM_LASTFM_APISECRET")));
-
-
-            var provider = services.BuildServiceProvider();
-
-            await ApplyMigrationsAsync(provider);
-
-            var bot = provider.GetRequiredService<IBot>();
-
-            await bot.StartAsync();
-
-            await Task.Run(() => Thread.Sleep(Timeout.Infinite));
         }
 
         private static async Task ApplyMigrationsAsync(ServiceProvider provider)

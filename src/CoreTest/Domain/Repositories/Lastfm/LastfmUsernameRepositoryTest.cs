@@ -48,7 +48,7 @@ namespace CoreTest.Domain.Repositories.Lastfm
 
             using (var context = new MyDbContext(options))
             {
-                var user = await context.Users.FindAsync(4);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.TelegramUserId == 4);
 
                 Assert.AreEqual("Bob", user.LastfmUsername);
             }
@@ -86,7 +86,7 @@ namespace CoreTest.Domain.Repositories.Lastfm
             using (var context = new MyDbContext(options))
             {
                 var usersFromDatabase = await context.Users.ToListAsync();
-                var user = await context.Users.FindAsync(3);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.TelegramUserId == 3);
 
                 Assert.AreEqual(Users.Count - 1, usersFromDatabase.Count);
                 Assert.Null(user);
