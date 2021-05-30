@@ -1,5 +1,6 @@
 ﻿using Lastgram.Commands;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -14,10 +15,13 @@ namespace Lastgram
         private readonly ITelegramBotClient telegramBotClient;
         private readonly HttpClient httpClient;
         private readonly ICommandHandler commandHandler;
+        private readonly IAvailableCommandsService availableCommandsService;
 
         private DateTime started;
 
-        public Bot(ICommandHandler commandHandler)
+        public Bot(
+            ICommandHandler commandHandler,
+            IAvailableCommandsService availableCommandsService)
         {
             this.commandHandler = commandHandler;
 
@@ -26,14 +30,22 @@ namespace Lastgram
             string apiKey = GetApiKey();
 
             telegramBotClient = new TelegramBotClient(apiKey, httpClient);
+            this.availableCommandsService = availableCommandsService;
         }
 
         public async Task StartAsync()
         {
             started = DateTime.UtcNow;
 
-            var commands = commandHandler.GetBotCommands();
-            await telegramBotClient.SetMyCommandsAsync(commands);
+            var commands = availableCommandsService.GetBotCommands();
+
+            var botCommands = commands.Select(c => new BotCommand
+            {
+                Command = c.CommandName,
+                Description = c.CommandDescription,
+            });
+
+            await telegramBotClient.SetMyCommandsAsync(botCommands);
 
             telegramBotClient.OnMessage += OnMessage;
             telegramBotClient.StartReceiving();

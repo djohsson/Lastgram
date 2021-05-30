@@ -22,7 +22,9 @@ namespace Core.Domain.Repositories.Spotify
                 return;
             }
 
-            string formattedTrack = track.Length > 255 ? track.Substring(0, 255) : track;
+            string formattedTrack = track.Length > 255
+                ? track.Substring(0, 255)
+                : track;
 
             var existingTrack = await context.SpotifyTracks.FirstOrDefaultAsync(t =>
                 t.Track == formattedTrack &&
@@ -54,10 +56,14 @@ namespace Core.Domain.Repositories.Spotify
 
         public async Task<string> TryGetSpotifyTrackUrlAsync(string artist, string track)
         {
+            string formattedTrack = track.Length > 255
+                ? track.Substring(0, 255)
+                : track;
+
             var spotifyTrack = await context.SpotifyTracks
                 .FirstOrDefaultAsync(t =>
-                    t.Track.Equals(track)
-                    && t.Artist.Name.Equals(artist));
+                    t.Track == formattedTrack
+                    && t.Artist.Name == artist);
 
             if (spotifyTrack == null)
             {

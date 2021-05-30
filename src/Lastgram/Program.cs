@@ -53,6 +53,7 @@ namespace Lastgram
                 .AddTransient<ITrackApi, TrackApi>()
                 .AddTransient<IOAuthClient, OAuthClient>()
                 .AddTransient<ICommandHandler, CommandHandler>()
+                .AddTransient<IAvailableCommandsService, AvailableCommandsService>()
                 .AddTransient<ICommand, ForgetMeCommand>()
                 .AddTransient<ForgetMeCommand>()
                 .AddTransient<ICommand, NowPlayingCommand>()
