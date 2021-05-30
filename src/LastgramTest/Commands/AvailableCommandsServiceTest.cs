@@ -46,6 +46,9 @@ namespace LastgramTest.Commands
         [TestCase("/toptracks", typeof(TopTracksCommand))]
         [TestCase("/nonexisting", null, false)]
         [TestCase("/nonexisting@bot", null, false)]
+        [TestCase("/", null, false)]
+        [TestCase("", null, false)]
+        [TestCase(null, null, false)]
         public void ShouldParseCorrectCommandType(string text, Type correctType, bool isValid = true)
         {
             commands.Add(new NowPlayingCommand(null, null, null));
