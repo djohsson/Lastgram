@@ -4,12 +4,12 @@ namespace Core.Domain.Repositories.Lastfm
 {
     public interface ILastfmUsernameRepository
     {
-        Task AddUserAsync(int telegramUserId, string lastfmUsername);
+        Task AddUserAsync(long telegramUserId, string lastfmUsername);
 
-        Task UpdateUserAsync(int telegramUserId, string lastfmUsername);
+        Task UpdateUserAsync(long telegramUserId, string lastfmUsername);
 
-        Task<string> TryGetUserAsync(int telegramUserId);
+        Task<string> TryGetUserAsync(long telegramUserId);
 
-        Task RemoveUserAsync(int telegramUserId);
+        Task RemoveUserAsync(long telegramUserId);
     }
 }

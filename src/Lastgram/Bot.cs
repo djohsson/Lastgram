@@ -2,9 +2,10 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
-using Telegram.Bot.Args;
+using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -18,6 +19,7 @@ namespace Lastgram
         private readonly IAvailableCommandsService availableCommandsService;
 
         private DateTime started;
+        private CancellationTokenSource cts;
 
         public Bot(
             ICommandHandler commandHandler,
@@ -36,6 +38,8 @@ namespace Lastgram
         public async Task StartAsync()
         {
             started = DateTime.UtcNow;
+            cts = new();
+            CancellationToken ct = cts.Token;
 
             var commands = availableCommandsService.GetBotCommands();
 
@@ -45,39 +49,49 @@ namespace Lastgram
                 Description = c.CommandDescription,
             });
 
-            await telegramBotClient.SetMyCommandsAsync(botCommands);
+            await telegramBotClient.SetMyCommandsAsync(botCommands, ct);
 
-            telegramBotClient.OnMessage += OnMessage;
-            telegramBotClient.StartReceiving();
+            telegramBotClient.StartReceiving(new DefaultUpdateHandler(HandleUpdateAsync, HandleErrorAsync), ct);
         }
 
         public void Stop()
         {
-            telegramBotClient.StopReceiving();
-            telegramBotClient.OnMessage -= OnMessage;
+            cts.Cancel();
         }
 
-        private async void OnMessage(object sender, MessageEventArgs e)
+        private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            if (e.Message.Date.ToUniversalTime() < started)
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (update.Message is not Message message)
             {
                 return;
             }
 
-            await ExecuteCommandAsync(e);
+            if (message.Date.ToUniversalTime() < started)
+            {
+                return;
+            }
+
+            await ExecuteCommandAsync(message);
         }
 
-        private async Task ExecuteCommandAsync(MessageEventArgs eventArgs)
+        private static Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        private async Task ExecuteCommandAsync(Message message)
         {
             try
             {
-                await commandHandler.ExecuteCommandAsync(eventArgs.Message, SendMessageAsync);
+                await commandHandler.ExecuteCommandAsync(message, SendMessageAsync);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
 
-                await SendMessageAsync(eventArgs.Message.Chat, "Oops, something went wrong 😢");
+                await SendMessageAsync(message.Chat, "Oops, something went wrong 😢");
             }
         }
 

@@ -49,8 +49,8 @@ namespace Lastgram.Commands
             int indexOfAtSign = command.IndexOf("@");
 
             return indexOfAtSign > 0
-                ? command.Substring(1, indexOfAtSign - 1)
-                : command.Substring(1);
+                ? command[1..indexOfAtSign]
+                : command[1..];
         }
     }
 }

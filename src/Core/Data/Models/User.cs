@@ -8,7 +8,7 @@ namespace Core.Data.Models
     public class User : BaseEntity
     {
         [Required]
-        public int TelegramUserId { get; set; }
+        public long TelegramUserId { get; set; }
 
         [Required]
         public string LastfmUsername { get; set; }

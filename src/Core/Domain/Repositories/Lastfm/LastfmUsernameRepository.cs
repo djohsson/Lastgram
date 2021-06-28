@@ -14,7 +14,7 @@ namespace Core.Domain.Repositories.Lastfm
             this.context = context;
         }
 
-        public async Task AddUserAsync(int telegramUserId, string lastFmUsername)
+        public async Task AddUserAsync(long telegramUserId, string lastFmUsername)
         {
             await context.Users.AddAsync(new User
             {
@@ -25,7 +25,7 @@ namespace Core.Domain.Repositories.Lastfm
             await context.SaveChangesAsync();
         }
 
-        public async Task RemoveUserAsync(int telegramUserId)
+        public async Task RemoveUserAsync(long telegramUserId)
         {
             var user = await context.Users.FirstOrDefaultAsync(u => u.TelegramUserId == telegramUserId);
 
@@ -39,14 +39,14 @@ namespace Core.Domain.Repositories.Lastfm
             await context.SaveChangesAsync();
         }
 
-        public async Task<string> TryGetUserAsync(int telegramUserId)
+        public async Task<string> TryGetUserAsync(long telegramUserId)
         {
             var user = await context.Users.FirstOrDefaultAsync(u => u.TelegramUserId == telegramUserId);
 
             return user?.LastfmUsername;
         }
 
-        public async Task UpdateUserAsync(int telegramUserId, string lastFmUsername)
+        public async Task UpdateUserAsync(long telegramUserId, string lastFmUsername)
         {
             var user = await context.Users.FirstOrDefaultAsync(u => u.TelegramUserId == telegramUserId);
 

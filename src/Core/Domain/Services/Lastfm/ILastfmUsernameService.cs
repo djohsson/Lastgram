@@ -4,10 +4,10 @@ namespace Core.Domain.Services.Lastfm
 {
     public interface ILastfmUsernameService
     {
-        Task AddOrUpdateUsernameAsync(int telegramUserId, string username);
+        Task AddOrUpdateUsernameAsync(long telegramUserId, string username);
 
-        Task<string> TryGetUsernameAsync(int telegramUserId);
+        Task<string> TryGetUsernameAsync(long telegramUserId);
 
-        Task RemoveUsernameAsync(int telegramUserId);
+        Task RemoveUsernameAsync(long telegramUserId);
     }
 }

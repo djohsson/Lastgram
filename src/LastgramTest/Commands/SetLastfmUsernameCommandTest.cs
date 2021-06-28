@@ -44,7 +44,7 @@ namespace LastgramTest.Commands
             if (shouldGetAdded)
             {
                 lastfmUsernameServiceMock.Verify(
-                mocks => mocks.AddOrUpdateUsernameAsync(It.Is<int>(id => id == 1),
+                mocks => mocks.AddOrUpdateUsernameAsync(It.Is<long>(id => id == 1),
                 It.Is<string>(username => username == lastfmUsername)),
                 Times.Once);
             }

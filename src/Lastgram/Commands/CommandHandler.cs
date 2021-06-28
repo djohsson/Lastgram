@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Types;
 
 namespace Lastgram.Commands
@@ -27,12 +27,11 @@ namespace Lastgram.Commands
 
             try
             {
-                using (var scope = serviceProvider.CreateScope())
-                {
-                    var command = (ICommand)scope.ServiceProvider.GetRequiredService(type);
+                using var scope = serviceProvider.CreateScope();
 
-                    await command.ExecuteCommandAsync(message, responseFunc);
-                }
+                var command = (ICommand)scope.ServiceProvider.GetRequiredService(type);
+
+                await command.ExecuteCommandAsync(message, responseFunc);
             }
             catch (CommandException e)
             {

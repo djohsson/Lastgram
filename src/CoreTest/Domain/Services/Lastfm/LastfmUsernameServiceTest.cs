@@ -27,7 +27,7 @@ namespace CoreTest.Domain.Services.Lastfm
         public async Task DoNotAddInvalidUsername(string username, bool isValid)
         {
             lastfmUsernameRepositoryMock
-                .Setup(m => m.TryGetUserAsync(It.IsAny<int>()))
+                .Setup(m => m.TryGetUserAsync(It.IsAny<long>()))
                 .ReturnsAsync(value: null);
 
             await lastfmUsernameService.AddOrUpdateUsernameAsync(1, username);
@@ -35,7 +35,7 @@ namespace CoreTest.Domain.Services.Lastfm
             var timesCalled = isValid ? Times.Once() : Times.Never();
 
             lastfmUsernameRepositoryMock
-                .Verify(m => m.AddUserAsync(It.IsAny<int>(), It.IsAny<string>()), timesCalled);
+                .Verify(m => m.AddUserAsync(It.IsAny<long>(), It.IsAny<string>()), timesCalled);
         }
 
         [Test]
@@ -45,16 +45,16 @@ namespace CoreTest.Domain.Services.Lastfm
             const string username = "Bob";
 
             lastfmUsernameRepositoryMock
-                .Setup(m => m.TryGetUserAsync(It.Is<int>(i => i == id)))
+                .Setup(m => m.TryGetUserAsync(It.Is<long>(i => i == id)))
                 .ReturnsAsync(username);
 
             await lastfmUsernameService.AddOrUpdateUsernameAsync(id, username);
 
             lastfmUsernameRepositoryMock
-                .Verify(m => m.AddUserAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+                .Verify(m => m.AddUserAsync(It.IsAny<long>(), It.IsAny<string>()), Times.Never);
 
             lastfmUsernameRepositoryMock
-                .Verify(m => m.UpdateUserAsync(It.Is<int>(i => i == id), It.Is<string>(u => u == username)), Times.Once);
+                .Verify(m => m.UpdateUserAsync(It.Is<long>(i => i == id), It.Is<string>(u => u == username)), Times.Once);
         }
     }
 }

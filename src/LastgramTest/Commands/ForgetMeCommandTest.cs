@@ -28,7 +28,7 @@ namespace LastgramTest.Commands
                 (chat, message) => Task.CompletedTask
             );
 
-            lastfmUsernameServiceMock.Verify(m => m.RemoveUsernameAsync(It.Is<int>(id => id == 1)), Times.Once);
+            lastfmUsernameServiceMock.Verify(m => m.RemoveUsernameAsync(It.Is<long>(id => id == 1)), Times.Once);
         }
     }
 }

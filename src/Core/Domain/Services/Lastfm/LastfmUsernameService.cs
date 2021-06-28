@@ -12,7 +12,7 @@ namespace Core.Domain.Services.Lastfm
             this.userRepository = userRepository;
         }
 
-        public async Task AddOrUpdateUsernameAsync(int telegramUserId, string username)
+        public async Task AddOrUpdateUsernameAsync(long telegramUserId, string username)
         {
             if (string.IsNullOrEmpty(username))
             {
@@ -31,12 +31,12 @@ namespace Core.Domain.Services.Lastfm
             await userRepository.UpdateUserAsync(telegramUserId, username);
         }
 
-        public async Task RemoveUsernameAsync(int telegramUserId)
+        public async Task RemoveUsernameAsync(long telegramUserId)
         {
             await userRepository.RemoveUserAsync(telegramUserId);
         }
 
-        public async Task<string> TryGetUsernameAsync(int telegramUserId)
+        public async Task<string> TryGetUsernameAsync(long telegramUserId)
         {
             return await userRepository.TryGetUserAsync(telegramUserId);
         }

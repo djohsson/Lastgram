@@ -36,7 +36,7 @@ namespace LastgramTest.Commands
             string usernameFromService = "username";
 
             lastfmUsernameServiceMock
-                .Setup(m => m.TryGetUsernameAsync(It.IsAny<int>()))
+                .Setup(m => m.TryGetUsernameAsync(It.IsAny<long>()))
                 .ReturnsAsync(usernameFromService);
 
             lastfmServiceMock
@@ -77,7 +77,7 @@ namespace LastgramTest.Commands
             string usernameFromService = "username";
 
             lastfmUsernameServiceMock
-                .Setup(m => m.TryGetUsernameAsync(It.IsAny<int>()))
+                .Setup(m => m.TryGetUsernameAsync(It.IsAny<long>()))
                 .ReturnsAsync(usernameFromService);
 
             lastfmServiceMock

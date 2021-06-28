@@ -1,11 +1,11 @@
-﻿using Core.Domain.Repositories.Spotify;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Core.Domain.Repositories.Spotify;
 using Core.Domain.Services.Spotify;
 using Moq;
 using NUnit.Framework;
 using SpotifyAPI.Web;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CoreTest.Domain.Services.Spotify
 {
@@ -79,8 +79,10 @@ namespace CoreTest.Domain.Services.Spotify
 
         private void MockSearch(string url)
         {
-            var urlDictionary = new Dictionary<string, string>();
-            urlDictionary.Add("spotify", url);
+            var urlDictionary = new Dictionary<string, string>
+            {
+                { "spotify", url }
+            };
 
             searchClientMock.Setup(m => m.Item(It.IsAny<SearchRequest>()))
                 .ReturnsAsync(new SearchResponse()

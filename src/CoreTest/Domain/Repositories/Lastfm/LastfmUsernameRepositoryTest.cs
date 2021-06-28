@@ -1,12 +1,12 @@
-﻿using Core.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Core.Data;
 using Core.Data.Models;
 using Core.Domain.Repositories.Lastfm;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreTest.Domain.Repositories.Lastfm
 {
@@ -15,7 +15,7 @@ namespace CoreTest.Domain.Repositories.Lastfm
     {
         private DbContextOptions<MyDbContext> options;
 
-        private static readonly List<User> Users = new List<User>()
+        private static readonly List<User> Users = new()
         {
             new User() { TelegramUserId = 1, LastfmUsername = "John" },
             new User() { TelegramUserId = 2, LastfmUsername = "Jane" },
@@ -29,11 +29,10 @@ namespace CoreTest.Domain.Repositories.Lastfm
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
-            using (var context = new MyDbContext(options))
-            {
-                context.Users.AddRange(Users);
-                context.SaveChanges();
-            }
+            using var context = new MyDbContext(options);
+
+            context.Users.AddRange(Users);
+            context.SaveChanges();
         }
 
         [Test]
@@ -97,20 +96,19 @@ namespace CoreTest.Domain.Repositories.Lastfm
         [TestCase(4, false)]
         public async Task TryGetUserAsync(int telegramUserId, bool exists)
         {
-            using (var context = new MyDbContext(options))
+            using var context = new MyDbContext(options);
+
+            var lastfmUsernameRepository = new LastfmUsernameRepository(context);
+
+            var user = await lastfmUsernameRepository.TryGetUserAsync(telegramUserId);
+
+            if (exists)
             {
-                var lastfmUsernameRepository = new LastfmUsernameRepository(context);
-
-                var user = await lastfmUsernameRepository.TryGetUserAsync(telegramUserId);
-
-                if (exists)
-                {
-                    Assert.IsNotNull(user);
-                }
-                else
-                {
-                    Assert.Null(user);
-                }
+                Assert.IsNotNull(user);
+            }
+            else
+            {
+                Assert.Null(user);
             }
         }
     }

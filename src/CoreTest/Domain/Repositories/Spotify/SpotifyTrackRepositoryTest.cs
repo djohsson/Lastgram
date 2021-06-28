@@ -1,11 +1,11 @@
-﻿using Core.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Core.Data;
 using Core.Data.Models;
 using Core.Domain.Repositories.Spotify;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CoreTest.Domain.Repositories.Spotify
 {
@@ -28,11 +28,10 @@ namespace CoreTest.Domain.Repositories.Spotify
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
-            using (var context = new MyDbContext(options))
-            {
-                context.SpotifyTracks.AddRange(Tracks);
-                context.SaveChanges();
-            }
+            using var context = new MyDbContext(options);
+
+            context.SpotifyTracks.AddRange(Tracks);
+            context.SaveChanges();
         }
 
         [Test]
