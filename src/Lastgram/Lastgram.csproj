@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Inflatable.Lastfm" Version="1.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
-    <PackageReference Include="SpotifyAPI.Web" Version="6.2.1" />
+    <PackageReference Include="SpotifyAPI.Web" Version="6.3.0" />
     <PackageReference Include="Telegram.Bot" Version="16.0.2" />
     <PackageReference Include="Telegram.Bot.Extensions.Polling" Version="0.2.0" />
   </ItemGroup>
